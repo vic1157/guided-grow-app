@@ -50,7 +50,7 @@ const Index = () => {
               {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => {
                 const isCompleted = [0, 1, 2, 4, 5].includes(index);
                 return (
-                  <div key={day} className="flex flex-col items-center gap-2">
+                  <div key={index} className="flex flex-col items-center gap-2">
                     <span className="text-xs text-muted-foreground font-medium">{day}</span>
                     <div
                       className={`h-8 w-8 rounded-full flex items-center justify-center ${
