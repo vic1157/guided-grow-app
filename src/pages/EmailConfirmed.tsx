@@ -51,7 +51,7 @@ const EmailConfirmed = () => {
           onClick={handleContinue}
           className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium mb-8"
         >
-          Continue to App Overview
+          Explore the RYB App!
         </Button>
 
         <div className="w-full space-y-3">
