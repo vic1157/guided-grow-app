@@ -36,7 +36,7 @@ const OnboardingProgress = () => {
     {
       id: "4",
       title: "Ask Leo Your First Question",
-      description: "Do you have a question about the Bible? Leo will point you in the right direction!",
+      description: "Ask Leo a Bible-related question and get an instant-response",
       completed: false,
     },
     {
