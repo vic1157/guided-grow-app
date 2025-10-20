@@ -42,7 +42,7 @@ const OnboardingProgress = () => {
     {
       id: "5",
       title: "Take Your First Quiz",
-      description: "Want to test your knowledge on what you read?",
+      description: "Test your knowledge on what you read",
       completed: false,
     },
     {
