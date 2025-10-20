@@ -88,11 +88,26 @@ const Profile = () => {
           </TabsContent>
           
           <TabsContent value="testimonies" className="mt-6">
-            <Card className="p-8 text-center">
-              <h3 className="text-xl font-bold text-foreground mb-2">No Testimonies Yet!</h3>
-              <p className="text-sm text-muted-foreground">
-                Share your faith journey and experiences with the community.
-              </p>
+            <Card className="p-6 relative">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="absolute top-4 right-4 h-8 w-8"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+              
+              <div className="border-l-4 border-foreground pl-4">
+                <h3 className="text-xl font-bold text-foreground mb-4">What's Your Testimony?</h3>
+                
+                <p className="text-sm text-foreground leading-relaxed mb-4 italic">
+                  This section is used to declare your testimony. Whenever a user comes and views your profile, what do you want them to know about your spiritual journey and the goodness that God is doing in your life?
+                </p>
+                
+                <p className="text-sm text-foreground leading-relaxed italic">
+                  To update your testimony, toggle the edit icon to the top right to edit this section!
+                </p>
+              </div>
             </Card>
           </TabsContent>
         </Tabs>
