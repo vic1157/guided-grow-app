@@ -83,17 +83,17 @@ const Index = () => {
           <div>
             <h2 className="font-semibold text-lg mb-4 text-card-foreground">Weekly Activity</h2>
             <div className="grid grid-cols-3 gap-3">
-              <div className="border border-border rounded-lg p-3 space-y-1">
+              <div className="border border-border rounded-lg p-3 space-y-0.5">
                 <p className="text-xs text-muted-foreground">Time</p>
-                <p className="text-2xl font-bold text-card-foreground">4.5hrs</p>
+                <p className="text-lg font-bold text-card-foreground">4.5hrs</p>
               </div>
-              <div className="border border-border rounded-lg p-3 space-y-1">
+              <div className="border border-border rounded-lg p-3 space-y-0.5">
                 <p className="text-xs text-muted-foreground">Chapters</p>
-                <p className="text-2xl font-bold text-card-foreground">3</p>
+                <p className="text-lg font-bold text-card-foreground">3</p>
               </div>
-              <div className="border border-border rounded-lg p-3 space-y-1">
+              <div className="border border-border rounded-lg p-3 space-y-0.5">
                 <p className="text-xs text-muted-foreground">Scrolls</p>
-                <p className="text-2xl font-bold text-card-foreground">15</p>
+                <p className="text-lg font-bold text-card-foreground">15</p>
               </div>
             </div>
           </div>
