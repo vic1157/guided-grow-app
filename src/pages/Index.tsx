@@ -30,9 +30,6 @@ const Index = () => {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        {/* Onboarding Progress */}
-        <OnboardingProgress />
-
         {/* Combined Stats Card */}
         <Card className="p-6 space-y-8">
           {/* Reading Streak */}
@@ -112,6 +109,9 @@ const Index = () => {
             </div>
           </div>
         </Card>
+
+        {/* Onboarding Progress */}
+        <OnboardingProgress />
 
         {/* Curated Bible Readings */}
         <div className="space-y-3">
