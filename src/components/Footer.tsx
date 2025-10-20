@@ -16,7 +16,7 @@ const Footer = () => {
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50">
-      <nav className="flex items-center justify-around px-4 py-2 max-w-2xl mx-auto">
+      <nav className="grid grid-cols-5 gap-0 px-4 py-2 max-w-2xl mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -40,7 +40,7 @@ const Footer = () => {
               key={item.label}
               onClick={() => navigate(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center py-2 px-3 transition-colors min-w-[64px]",
+                "flex flex-col items-center justify-center py-2 transition-colors",
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
