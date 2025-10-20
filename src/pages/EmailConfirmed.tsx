@@ -26,7 +26,7 @@ const EmailConfirmed = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-between px-8 py-12">
+    <div className="min-h-screen bg-background flex flex-col items-center px-8 py-12">
       <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center">
         <div className="bg-accent rounded-3xl p-6 mb-4">
           <BookOpen className="h-12 w-12 text-foreground" strokeWidth={1.5} />
@@ -74,7 +74,7 @@ const EmailConfirmed = () => {
         </div>
       </div>
 
-      <div className="h-1 w-32 bg-foreground rounded-full" />
+      <div className="h-1 w-32 bg-foreground rounded-full mt-8 mb-12" />
     </div>
   );
 };
