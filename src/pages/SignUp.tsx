@@ -25,7 +25,7 @@ const SignUp = () => {
   const handleCreateAccount = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement sign-up logic
-    navigate("/home");
+    navigate("/verify-email", { state: { email: formData.email } });
   };
 
   const handleGoogleSignUp = () => {
