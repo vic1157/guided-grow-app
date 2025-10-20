@@ -103,7 +103,7 @@ const Index = () => {
             <h2 className="font-semibold text-lg mb-3 text-card-foreground">Verse of the Day</h2>
             <div className="border border-border rounded-lg p-4">
               <div className="border-l-4 border-foreground pl-4 py-2">
-                <p className="text-foreground leading-relaxed mb-2">
+                <p className="text-sm text-foreground leading-relaxed mb-2">
                   "For I know the plans I have for you," declares the LORD, "plans to prosper you and
                   not to harm you, plans to give you hope and a future."
                 </p>
