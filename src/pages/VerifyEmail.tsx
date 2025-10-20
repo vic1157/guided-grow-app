@@ -71,7 +71,7 @@ const VerifyEmail = () => {
     const verificationCode = code.join("");
     if (verificationCode.length === 6) {
       // TODO: Implement verification logic
-      navigate("/home");
+      navigate("/email-confirmed");
     }
   };
 
