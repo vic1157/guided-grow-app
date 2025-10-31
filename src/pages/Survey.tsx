@@ -37,7 +37,7 @@ const Survey = () => {
     } else {
       // Last question - submit and navigate
       console.log("Survey answers:", answers);
-      navigate("/home");
+      navigate("/survey-results");
     }
   };
 
@@ -45,11 +45,6 @@ const Survey = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
-  };
-
-  const handleSkip = () => {
-    // TODO: Implement skip logic
-    navigate("/home");
   };
 
   const handleBack = () => {
@@ -71,57 +66,117 @@ const Survey = () => {
 
   const personaTraits = getPersonaTraits();
 
-  // Question configurations - to be replaced with actual questions
+  // Question configurations
   const questions = [
     {
       id: "question1",
-      label: "Question 1",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "What best describes your relationship with the Bible?",
+      options: [
+        "I read regularly and feel spiritually nourished.",
+        "I try to read but struggle to stay on track.",
+        "I connect more through worship or prayer than reading Scripture.",
+        "I find Scripture hard to understand or apply.",
+        "I'm ready for deeper, more challenging study.",
+      ],
     },
     {
       id: "question2",
-      label: "Question 2",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "Which type of spiritual content draws you in the most?",
+      options: [
+        "Emotionally healing messages that touch the heart.",
+        "In-depth biblical teaching and analysis.",
+        "Clear, practical lessons I can apply today.",
+        "Purpose-driven content about mission and calling.",
+        "Insightful reflections that stretch how I think.",
+      ],
     },
     {
       id: "question3",
-      label: "Question 3",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "What's your biggest challenge with Bible study?",
+      options: [
+        "Staying consistent or building a regular habit.",
+        "Understanding what I read and how it applies.",
+        "Feeling emotionally engaged or connected with it.",
+        "Finding content that challenges me beyond basics.",
+        "Needing shorter, more digestible sessions.",
+      ],
     },
     {
       id: "question4",
-      label: "Question 4",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "Which statement feels most true right now?",
+      options: [
+        "I need to rebuild or strengthen my relationship with God.",
+        "I want to hear God's voice more clearly in my life.",
+        "I feel spiritually dry and seek fresh connection.",
+        "I'm doing okay but desire deeper growth.",
+        "I want more clarity about my purpose and calling.",
+      ],
     },
     {
       id: "question5",
-      label: "Question 5",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "How do you best grow in your walk with God?",
+      options: [
+        "Through worship, music, or relational connection.",
+        "Through deep study, learning, and discovery.",
+        "Through action, service, and living out faith.",
+        "Through structure, discipline, and spiritual habits.",
+        "Through quiet reflection, journaling, and prayer.",
+      ],
     },
     {
       id: "question6",
-      label: "Question 6",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "What do you crave most right now in your spiritual life?",
+      options: [
+        "Consistency and a stable rhythm with God.",
+        "Clear understanding of who I am and what I'm called to do.",
+        "Emotional healing, freedom, and renewal.",
+        "A richer understanding of Scripture and its meaning.",
+        "A stronger sense of God's presence and proximity.",
+      ],
     },
     {
       id: "question7",
-      label: "Question 7",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "What frustrates you most about Christian content?",
+      options: [
+        "It's too shallow or generic—less meaningful impact.",
+        "It lacks authenticity—emotion, real struggle, transparency.",
+        "It doesn't feel relevant to my real everyday life.",
+        "It's overwhelming, heavy, or hard to stick with.",
+        "It doesn't push me to grow spiritually or think differently.",
+      ],
     },
     {
       id: "question8",
-      label: "Question 8",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "When do you usually connect with God the most?",
+      options: [
+        "In early mornings, during quiet time or prayer.",
+        "During worship, music, or emotional encounters.",
+        "While reading, studying, or learning the Word.",
+        "While serving or doing something for others.",
+        "In quiet reflection, journaling, or processing life with God.",
+      ],
     },
     {
       id: "question9",
-      label: "Question 9",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "What motivates you to grow spiritually?",
+      options: [
+        "A hunger to know God's heart and character more deeply.",
+        "A desire for emotional wholeness and healing.",
+        "A call to live out faith boldly and impactfully.",
+        "A need for discipline and spiritual maturity.",
+        "Curiosity about truth and spiritual insight.",
+      ],
     },
     {
       id: "question10",
-      label: "Question 10",
-      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      label: "What do you wish spiritual content did better?",
+      options: [
+        "Helped me establish and keep strong spiritual habits.",
+        "Made me feel seen, supported, and emotionally connected.",
+        "Gave deeper insight into prophetic or biblical truth.",
+        "Showed practical ways to live out my purpose.",
+        "Helped me grasp Scripture more clearly and confidently.",
+      ],
     },
   ];
 
@@ -140,12 +195,7 @@ const Survey = () => {
           Step {currentQuestionIndex + 1} of {questions.length}
         </p>
 
-        <button
-          onClick={handleSkip}
-          className="text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
-        >
-          Skip
-        </button>
+        <div className="w-12" />
       </div>
 
       {/* Progress Bar */}
@@ -163,7 +213,7 @@ const Survey = () => {
             Tell us about yourself
           </h1>
           <p className="text-sm text-muted-foreground mb-8">
-            Help us personalize your Bible reading experience by sharing a bit about your current reading habits.
+            Help us personalize your Bible reading experience by sharing a bit about your current reading habits. Please select the option that best describes your current reading habits.
           </p>
 
           {/* Current Question */}

@@ -9,6 +9,8 @@ import SignUp from "./pages/SignUp";
 import VerifyEmail from "./pages/VerifyEmail";
 import EmailConfirmed from "./pages/EmailConfirmed";
 import Survey from "./pages/Survey";
+import SurveyResults from "./pages/SurveyResults";
+import Paywall from "./pages/Paywall";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/email-confirmed" element={<EmailConfirmed />} />
           <Route path="/survey" element={<Survey />} />
+          <Route path="/survey-results" element={<SurveyResults />} />
+          <Route path="/paywall" element={<Paywall />} />
           <Route path="/home" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
