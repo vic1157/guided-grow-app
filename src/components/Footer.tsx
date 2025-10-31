@@ -15,7 +15,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50">
+    <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
       <nav className="grid grid-cols-5 gap-0 px-4 py-2 max-w-2xl mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -26,11 +26,12 @@ const Footer = () => {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="flex flex-col items-center justify-center -mt-6"
+                className="flex flex-col items-center justify-center -mt-6 relative"
               >
                 <div className="bg-foreground text-background rounded-full p-4 shadow-lg hover:scale-105 transition-transform">
                   <Icon className="h-6 w-6" />
                 </div>
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-1 bg-foreground rounded-full"></div>
               </button>
             );
           }

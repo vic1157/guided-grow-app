@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-muted pb-20">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-card border-b border-border">
+      <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
@@ -30,7 +30,7 @@ const Index = () => {
       </header>
 
       {/* Combined Stats Card - Attached to top */}
-      <div className="bg-card border-b border-border">
+      <div className="bg-muted border-b-2 border-foreground/30">
         <div className="max-w-2xl mx-auto px-4 py-6">
           <div className="space-y-8">
             {/* Reading Streak */}
@@ -54,7 +54,7 @@ const Index = () => {
                         className={`h-8 w-8 rounded-full flex items-center justify-center ${
                           isCompleted
                             ? "bg-foreground text-background"
-                            : "bg-muted text-muted-foreground"
+                            : "border-2 border-muted-foreground/50"
                         }`}
                       >
                         {isCompleted && (
@@ -81,15 +81,15 @@ const Index = () => {
             <div>
               <h2 className="font-semibold text-lg mb-4 text-card-foreground">Weekly Activity</h2>
               <div className="grid grid-cols-3 gap-3">
-                <div className="border border-border rounded-lg p-3 space-y-0.5">
+                <div className="bg-card border border-border rounded-lg p-3 space-y-0.5">
                   <p className="text-xs text-muted-foreground">Time</p>
                   <p className="text-lg font-bold text-card-foreground">4.5hrs</p>
                 </div>
-                <div className="border border-border rounded-lg p-3 space-y-0.5">
+                <div className="bg-card border border-border rounded-lg p-3 space-y-0.5">
                   <p className="text-xs text-muted-foreground">Chapters</p>
                   <p className="text-lg font-bold text-card-foreground">3</p>
                 </div>
-                <div className="border border-border rounded-lg p-3 space-y-0.5">
+                <div className="bg-card border border-border rounded-lg p-3 space-y-0.5">
                   <p className="text-xs text-muted-foreground">Scrolls</p>
                   <p className="text-lg font-bold text-card-foreground">15</p>
                 </div>
@@ -99,7 +99,7 @@ const Index = () => {
             {/* Verse of the Day */}
             <div>
               <h2 className="font-semibold text-lg mb-3 text-card-foreground">Verse of the Day</h2>
-              <div className="border border-border rounded-lg p-4">
+              <div className="bg-card border border-border rounded-lg p-4">
                 <div className="border-l-4 border-foreground pl-4 py-2">
                   <p className="text-sm text-foreground leading-relaxed mb-2">
                     "For I know the plans I have for you," declares the LORD, "plans to prosper you and
@@ -113,37 +113,39 @@ const Index = () => {
         </div>
       </div>
 
-      <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-2xl mx-auto space-y-0">
 
-        {/* Onboarding Progress */}
-        <OnboardingProgress />
+        <div className="bg-background px-4 py-6">
+          {/* Onboarding Progress */}
+          <OnboardingProgress />
+        </div>
 
         {/* Curated Bible Readings */}
-        <div className="space-y-3">
+        <div className="bg-background px-4 py-6 space-y-3">
           <h2 className="font-semibold text-lg text-foreground">Curated Bible Readings</h2>
-          
-          <Card className="p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer">
+
+          <Card className="bg-card p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer">
             <div>
               <h3 className="font-semibold text-card-foreground">Daily Recommendation</h3>
               <p className="text-sm text-muted-foreground">Curated passage personalized for you</p>
             </div>
-            <BookOpen className="h-6 w-6 text-primary" />
+            <BookOpen className="h-6 w-6 text-foreground" />
           </Card>
 
-          <Card className="p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer">
+          <Card className="bg-card p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer">
             <div>
               <h3 className="font-semibold text-card-foreground">How are you feeling?</h3>
               <p className="text-sm text-muted-foreground">Find passages based on your mood</p>
             </div>
-            <Heart className="h-6 w-6 text-primary" />
+            <Heart className="h-6 w-6 text-foreground" />
           </Card>
 
-          <Card className="p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer">
+          <Card className="bg-card p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer">
             <div>
               <h3 className="font-semibold text-card-foreground">Explore By Topic</h3>
               <p className="text-sm text-muted-foreground">Browse categories and themes</p>
             </div>
-            <Compass className="h-6 w-6 text-primary" />
+            <Compass className="h-6 w-6 text-foreground" />
           </Card>
         </div>
       </main>
