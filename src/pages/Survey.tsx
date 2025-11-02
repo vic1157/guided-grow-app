@@ -192,7 +192,7 @@ const Survey = () => {
         </button>
 
         <p className="text-sm font-medium text-muted-foreground">
-          Step {currentQuestionIndex + 1} of {questions.length}
+          Question {currentQuestionIndex + 1} of {questions.length}
         </p>
 
         <div className="w-12" />
@@ -213,7 +213,7 @@ const Survey = () => {
             Tell us about yourself
           </h1>
           <p className="text-sm text-muted-foreground mb-8">
-            Help us personalize your Bible reading experience by sharing a bit about your current reading habits. Please select the option that best describes your current reading habits.
+            Help us personalize your Bible reading experience by sharing a bit about your current reading habits. Your answers will help us personalize your RYB reading experience!
           </p>
 
           {/* Current Question */}
@@ -293,7 +293,8 @@ const Survey = () => {
             </Button>
             <Button
               onClick={handleNext}
-              className="flex-1 h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium"
+              disabled={!answers[questions[currentQuestionIndex].id as keyof typeof answers]}
+              className="flex-1 h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {currentQuestionIndex === questions.length - 1 ? "Finish" : "Next"}
             </Button>

@@ -1,13 +1,181 @@
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Settings, Eye, ArrowRight } from "lucide-react";
+import { Bell, Settings, Eye, ArrowRight, Upload, Camera, Check } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isOnboarding = searchParams.get("onboarding") === "true";
+
+  const [onboardingStep, setOnboardingStep] = useState(1);
+  const [profilePhoto, setProfilePhoto] = useState<string>("");
+  const [testimony, setTestimony] = useState("");
+  const [showOnboardingModal, setShowOnboardingModal] = useState(isOnboarding);
+
+  useEffect(() => {
+    if (isOnboarding) {
+      setShowOnboardingModal(true);
+    }
+  }, [isOnboarding]);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleNextStep = () => {
+    if (onboardingStep === 1) {
+      setOnboardingStep(2);
+    } else if (onboardingStep === 2) {
+      // Complete onboarding
+      localStorage.setItem("profileOnboardingComplete", "true");
+
+      // Dispatch custom event to update OnboardingProgress
+      window.dispatchEvent(new Event("onboardingComplete"));
+
+      setShowOnboardingModal(false);
+      navigate("/home");
+    }
+  };
+
+  const handleSkipStep = () => {
+    if (onboardingStep === 1) {
+      setOnboardingStep(2);
+    } else {
+      setShowOnboardingModal(false);
+      navigate("/home");
+    }
+  };
   return (
     <div className="min-h-screen bg-background pb-20">
+      {/* Onboarding Modal */}
+      {showOnboardingModal && (
+        <div className="fixed inset-0 bg-background/95 z-50 flex items-center justify-center p-6">
+          <Card className="w-full max-w-lg p-8 space-y-6">
+            {/* Progress Indicator */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div
+                className={`h-2 w-16 rounded-full ${
+                  onboardingStep >= 1 ? "bg-foreground" : "bg-muted-foreground/30"
+                }`}
+              />
+              <div
+                className={`h-2 w-16 rounded-full ${
+                  onboardingStep >= 2 ? "bg-foreground" : "bg-muted-foreground/30"
+                }`}
+              />
+            </div>
+
+            {/* Step 1: Upload Photo */}
+            {onboardingStep === 1 && (
+              <div className="space-y-6">
+                <div className="text-center space-y-2">
+                  <h2 className="text-2xl font-bold text-foreground">Add a Profile Photo</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Help others recognize you by adding a photo
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <Avatar className="h-32 w-32">
+                      <AvatarImage src={profilePhoto} />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-4xl">
+                        {profilePhoto ? "" : "JD"}
+                      </AvatarFallback>
+                    </Avatar>
+                    {profilePhoto && (
+                      <div className="absolute bottom-0 right-0 bg-green-500 rounded-full p-2">
+                        <Check className="h-4 w-4 text-white" />
+                      </div>
+                    )}
+                  </div>
+
+                  <label
+                    htmlFor="photo-upload"
+                    className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-foreground text-background rounded-xl font-medium hover:bg-foreground/90 transition-colors"
+                  >
+                    <Camera className="h-4 w-4" />
+                    Choose Photo
+                  </label>
+                  <input
+                    id="photo-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    onClick={handleSkipStep}
+                    variant="outline"
+                    className="flex-1 h-12 rounded-xl"
+                  >
+                    Skip for Now
+                  </Button>
+                  <Button onClick={handleNextStep} className="flex-1 h-12 rounded-xl">
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Add Testimony */}
+            {onboardingStep === 2 && (
+              <div className="space-y-6">
+                <div className="text-center space-y-2">
+                  <h2 className="text-2xl font-bold text-foreground">Share Your Testimony</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Let others know about your spiritual journey and God's work in your life
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-foreground">Your Testimony</label>
+                  <Textarea
+                    value={testimony}
+                    onChange={(e) => setTestimony(e.target.value)}
+                    placeholder="Share your story... How has God been working in your life? What drew you to Bible reading?"
+                    className="min-h-[150px] resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {testimony.length}/500 characters
+                  </p>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    onClick={handleSkipStep}
+                    variant="outline"
+                    className="flex-1 h-12 rounded-xl"
+                  >
+                    Skip for Now
+                  </Button>
+                  <Button onClick={handleNextStep} className="flex-1 h-12 rounded-xl">
+                    Complete Profile
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+
       {/* Header */}
       <header className="sticky top-0 z-10 bg-card border-b border-border">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -13,19 +14,25 @@ interface OnboardingTask {
 }
 
 const OnboardingProgress = () => {
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // Check localStorage for completed tasks
+  const isProfileComplete = localStorage.getItem("profileOnboardingComplete") === "true";
+  const isReadingGoalsComplete = localStorage.getItem("readingGoalsOnboardingComplete") === "true";
+
   const [tasks, setTasks] = useState<OnboardingTask[]>([
     {
       id: "1",
       title: "Complete Your Profile",
       description: "Add a profile photo and testimony",
-      completed: false,
+      completed: isProfileComplete,
     },
     {
       id: "2",
       title: "Set Your Reading Goals",
-      description: "Choose how often you want to read",
-      completed: false,
+      description: "Choose how often you want to read and enable reminders",
+      completed: isReadingGoalsComplete,
     },
     {
       id: "3",
@@ -45,19 +52,53 @@ const OnboardingProgress = () => {
       description: "Test your knowledge on what you read",
       completed: false,
     },
-    {
-      id: "6",
-      title: "Enable Notifications",
-      description: "Stay on track with daily reminders",
-      completed: false,
-    },
   ]);
 
   const completedTasks = tasks.filter((task) => task.completed).length;
   const totalTasks = tasks.length;
   const progressPercentage = (completedTasks / totalTasks) * 100;
 
-  const toggleTask = (taskId: string) => {
+  // Update tasks when localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const isProfileComplete = localStorage.getItem("profileOnboardingComplete") === "true";
+      const isReadingGoalsComplete = localStorage.getItem("readingGoalsOnboardingComplete") === "true";
+
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => {
+          if (task.id === "1") {
+            return { ...task, completed: isProfileComplete };
+          } else if (task.id === "2") {
+            return { ...task, completed: isReadingGoalsComplete };
+          }
+          return task;
+        })
+      );
+    };
+
+    // Listen for storage events and custom events
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("onboardingComplete", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("onboardingComplete", handleStorageChange);
+    };
+  }, []);
+
+  const handleTaskClick = (taskId: string) => {
+    // Navigate to specific pages for certain tasks
+    if (taskId === "1") {
+      // Complete Your Profile
+      navigate("/profile?onboarding=true");
+      return;
+    } else if (taskId === "2") {
+      // Set Your Reading Goals
+      navigate("/reading-goals?onboarding=true");
+      return;
+    }
+
+    // For other tasks, just toggle completion
     setTasks(
       tasks.map((task) =>
         task.id === taskId ? { ...task, completed: !task.completed } : task
@@ -106,7 +147,7 @@ const OnboardingProgress = () => {
             {tasks.map((task) => (
               <button
                 key={task.id}
-                onClick={() => toggleTask(task.id)}
+                onClick={() => handleTaskClick(task.id)}
                 className={cn(
                   "w-full flex items-start gap-3 p-3 rounded-lg transition-all",
                   "hover:bg-accent text-left",

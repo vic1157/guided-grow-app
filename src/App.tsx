@@ -11,6 +11,9 @@ import EmailConfirmed from "./pages/EmailConfirmed";
 import Survey from "./pages/Survey";
 import SurveyResults from "./pages/SurveyResults";
 import Paywall from "./pages/Paywall";
+import ReadingGoals from "./pages/ReadingGoals";
+import Community from "./pages/Community";
+import Read from "./pages/Read";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -32,6 +35,9 @@ const App = () => (
           <Route path="/survey" element={<Survey />} />
           <Route path="/survey-results" element={<SurveyResults />} />
           <Route path="/paywall" element={<Paywall />} />
+          <Route path="/reading-goals" element={<ReadingGoals />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/read" element={<Read />} />
           <Route path="/home" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

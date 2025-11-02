@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Check, Sparkles, TrendingUp, Lock, X } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Lock, X, Zap, BookOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const Paywall = () => {
@@ -17,17 +17,17 @@ const Paywall = () => {
       {
         icon: TrendingUp,
         title: "Daily Streak Tracking",
-        description: "Never lose momentum again with visual progress tracking",
+        description: "Never lose momentum again with visual progress tracking and accountability from friends and family (coming soon)",
       },
       {
         icon: Sparkles,
         title: "Advanced Study Tools",
-        description: "Deep-dive context, commentary, and historical background",
+        description: "Deep-dive into the context of specific chapters, commentary, and historical backgrounds",
       },
       {
         icon: Lock,
-        title: "Personalized Plans",
-        description: "Built for your consistency goals and spiritual rhythm",
+        title: "Personalized Reading Suggestions",
+        description: "Built for your consistency goals and spiritual rhythm, based on your mood, personal preferences and reading history",
       },
     ],
   };
@@ -56,16 +56,15 @@ const Paywall = () => {
   ];
 
   const features = [
-    { name: "Daily Bible readings", free: true, premium: true },
-    { name: "Basic reflection scrolls", free: true, premium: true },
-    { name: "AI chat with Eli (limited)", free: "5/day", premium: "Unlimited" },
-    { name: "Chapter context & background", free: false, premium: true },
-    { name: "Advanced study tools", free: false, premium: true },
-    { name: "Streak tracking & analytics", free: false, premium: true },
-    { name: "Personalized reading plans", free: false, premium: true },
-    { name: "Audio narration", free: false, premium: true },
-    { name: "Offline access", free: false, premium: true },
-    { name: "Priority support", free: false, premium: true },
+    { name: "Archive your daily bible activity (as scrolls)", free: true, premium: true },
+    { name: "Offline reading access", free: true, premium: true },
+    { name: "Social interactions (coming soon)", free: true, premium: true },
+    { name: "Streak & Bible activity analytics", free: true, premium: true },
+    { name: "AI chat with Leo (limited)", free: "5/day", premium: true },
+    { name: "AI powered reading suggestions", free: "5/week", premium: true },
+    { name: "AI powered chapter context & background", free: "3/week", premium: true },
+    { name: "AI quizzes based on your recent readings", free: "3/week", premium: true },
+    
   ];
 
   const handleStartTrial = () => {
@@ -92,7 +91,7 @@ const Paywall = () => {
             Ready to unlock your full potential?
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Your personalized journey starts here. Get everything you need to build consistency and
+            Your personalized journey starts here. Get everything you need to maintain your consistency and
             deepen your walk with God.
           </p>
         </div>
@@ -115,11 +114,96 @@ const Paywall = () => {
           })}
         </div>
 
+        {/* Denarii Explanation */}
+        <Card className="p-6 bg-accent/50 border-border">
+          <div className="max-w-3xl mx-auto space-y-4">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-foreground/10 mb-3">
+                <Sparkles className="h-6 w-6 text-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground">
+                What are Denarii?
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-sm text-foreground leading-relaxed text-center mb-8">
+                Denarii are credits that power AI-enhanced features in RYB. Think of them as fuel for your personalized spiritual journey with Leo, your AI guide.
+              </p>
+
+                <div className="grid md:grid-cols-2 gap-6 mt-8">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="h-4 w-4 text-foreground" />
+                      <h4 className="text-sm font-semibold text-foreground">AI-Powered Features</h4>
+                    </div>
+                    <ul className="space-y-1.5 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Scroll Summaries</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Interactive Quizzes</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Leo Chatbot Conversations</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Chapter Context & Analysis</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Personalized Reading Recommendations</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <BookOpen className="h-4 w-4 text-foreground" />
+                      <h4 className="text-sm font-semibold text-foreground">Always Free Features</h4>
+                    </div>
+                    <ul className="space-y-1.5 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Bible Reading</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Scrolls (Activity Tracking)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Social Interactions & Comments</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-foreground mt-1">•</span>
+                        <span>Reading Streaks</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+              <div className="mt-4 p-3 bg-background/50 rounded-lg border border-border">
+                <p className="text-xs text-muted-foreground italic">
+                  <span className="font-semibold text-foreground">Remember:</span> AI-powered features are enhancements to your Bible reading experience, not necessities. You can still strengthen your spirutual walk with our free features alone and we're here to support you regardless.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
         {/* Pricing Section */}
         <div className="space-y-6">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Choose Your Plan</h2>
-            <p className="text-sm text-muted-foreground">
+          <div className="text-center space-y-3">
+            <h2 className="text-2xl font-bold text-foreground">Choose Your Plan</h2>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              RYB is free to use forever. Each plan includes Denarii to unleash your experience with AI-powered features like Leo chat, chapter context, and personalized insights.
+            </p>
+            <p className="text-xs text-muted-foreground">
               Start with a 7-day free trial. Cancel anytime.
             </p>
           </div>
@@ -146,7 +230,10 @@ const Paywall = () => {
                     <span className="text-4xl font-bold text-foreground">{plan.price}</span>
                     <span className="text-sm text-muted-foreground">{plan.period}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground">{plan.denarii}</p>
+                  <div className="space-y-0.5">
+                    <p className="text-xs text-muted-foreground">{plan.denarii}</p>
+                    <p className="text-[10px] text-muted-foreground/70">to enhance with AI</p>
+                  </div>
                   {plan.savings && (
                     <Badge variant="secondary" className="text-xs">
                       {plan.savings}
