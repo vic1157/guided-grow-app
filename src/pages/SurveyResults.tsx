@@ -10,9 +10,9 @@ const SurveyResults = () => {
   const personaData = {
     name: "The Shepherd",
     tagline: "The Disciplined Guide",
-    emoji: "🌾",
+    emoji: "🐑",
     openingMessage:
-      "You told me you're trying to read but struggle to stay on track, and that what you crave most is consistency and a stable rhythm with God. I hear you—and I want you to know that your desire for structure isn't a weakness. It's actually a beautiful strength that God can build on. You're someone who values discipline and wants to lead by example, even if that consistency hasn't fully clicked yet.",
+      "You told me you're trying to read, but struggle to stay on track. I believe what you crave the most is consistency and a stable rhythm with God. I hear you — and I want you to know that your desire for structure isn't a weakness. It's actually a beautiful strength that God can build on. You're someone who values discipline and wants to lead by example, even if that consistency hasn't fully clicked yet.",
     strengths: [
       {
         title: "You're Naturally Structured",
@@ -34,7 +34,7 @@ const SurveyResults = () => {
       },
     ],
     trackDescription:
-      'RYB was made for people like you. I know staying consistent has been tough, so we\'ve built features specifically to help you build and maintain that rhythm you\'re craving. Through the "Brick by Brick" track, I\'ll guide you step-by-step to establish unshakable spiritual habits.',
+      'RYB was made for people like you. I know staying consistent has been tough, so we\'ve built features specifically to help you build and maintain that rhythm you\'re craving.',
     features: [
       "Daily Streak Tracking - See your consistency build day by day",
       "Structured Reading Plans - No guesswork, just clear paths forward",
@@ -66,9 +66,9 @@ const SurveyResults = () => {
             You are {personaData.name}
           </h1>
           <p className="text-xl text-muted-foreground mb-8">{personaData.tagline}</p>
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-2 text-sm text-foreground">
             <Sparkles className="h-4 w-4" />
-            <span>Personalized by Eli</span>
+            <span>Personalized by Leo, RYB's Personal AI Agent</span>
           </div>
         </div>
       </div>
@@ -122,12 +122,18 @@ const SurveyResults = () => {
             <div className="space-y-2">
               <p className="text-sm font-semibold text-foreground">Your journey with RYB includes:</p>
               <ul className="space-y-2">
-                {personaData.features.map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-foreground mt-2" />
-                    <span className="text-sm text-muted-foreground">{feature}</span>
-                  </li>
-                ))}
+                {personaData.features.map((feature, index) => {
+                  const [title, description] = feature.split(" - ");
+                  return (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-foreground mt-2" />
+                      <span className="text-sm">
+                        <span className="text-foreground font-medium">{title}</span>
+                        {description && <span className="text-muted-foreground"> - {description}</span>}
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </Card>
@@ -150,7 +156,7 @@ const SurveyResults = () => {
         {/* Closing Message */}
         <Card className="p-6 bg-card border-border text-center space-y-4">
           <p className="text-base text-foreground leading-relaxed">{personaData.closingMessage}</p>
-          <p className="text-sm text-muted-foreground">— Eli 📖 ✨</p>
+          <p className="text-sm text-muted-foreground">— Leo 📖 ✨</p>
         </Card>
 
         {/* CTA Button */}
