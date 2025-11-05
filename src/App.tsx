@@ -16,6 +16,8 @@ import Community from "./pages/Community";
 import Read from "./pages/Read";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
+import ScrollWalkthrough from "./pages/ScrollWalkthrough";
+import DemoScroll from "./pages/DemoScroll";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,8 @@ const App = () => (
           <Route path="/read" element={<Read />} />
           <Route path="/home" element={<Index />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/scroll-walkthrough" element={<ScrollWalkthrough />} />
+          <Route path="/demo-scroll" element={<DemoScroll />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

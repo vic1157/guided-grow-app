@@ -56,6 +56,44 @@ RYB is a Bible reading application designed to help users develop consistent Bib
 - Saves preferences to localStorage
 - Navigates to home after completion
 
+#### Scroll Walkthrough (`/scroll-walkthrough`)
+- 6-step interactive tour explaining the Scroll concept
+- Full-screen walkthrough with progress indicators
+- Interactive demo elements:
+  - Expandable AI summary with demo text
+  - Question categories (Understanding & Discussion) with example questions
+  - Visibility settings (Private, Friends Only, Public) with radio selectors
+- Step progression:
+  1. Welcome & Introduction - Overview of what Scrolls are
+  2. Scroll Overview - Reading session metadata (passage, time, verses)
+  3. AI-Generated Summary - Chapter context and themes
+  4. Questions Feature - Engaging with Scripture through questions
+  5. Personal Reflection - Journaling and visibility settings
+  6. Complete & Ready - Recap with dual CTAs
+- Completion options:
+  - "Try Demo Scroll" → Navigates to `/demo-scroll` (interactive demo)
+  - "Back to Home" → Navigates to `/home`
+- Marks completion in localStorage (`scrollWalkthroughComplete`)
+- Follows standard onboarding pattern with event dispatching
+
+#### Demo Scroll (`/demo-scroll`)
+- Fully interactive scroll experience for hands-on learning
+- Complete scroll interface with all features:
+  - Scroll header (passage title, verse range, time estimate)
+  - Expandable AI-generated summary with feedback buttons
+  - Questions section (Understanding & Discussion categories)
+  - Editable personal reflection textarea
+  - Visibility settings (Private, Friends Only, Public)
+  - Upload scroll button with success message
+- All elements are fully interactive:
+  - Expand/collapse summary and questions
+  - Edit reflection text
+  - Change visibility settings with radio buttons
+  - Navigate back to home anytime
+- Shows "Demo Scroll Complete" success message
+- Automatically returns to home after upload
+- Clear indication that no data is saved
+
 ### 2. Bible Reading Engine (`/read`)
 
 Interactive Bible reader with:
@@ -122,9 +160,10 @@ Preview implementation with "Coming Soon" overlay:
 Features OnboardingProgress component that tracks:
 1. Complete Your Profile ✓ (navigates to `/profile?onboarding=true`)
 2. Set Your Reading Goals ✓ (navigates to `/reading-goals?onboarding=true`)
-3. Complete Your First Reading
-4. Ask Leo Your First Question
-5. Take Your First Quiz
+3. RYB Scroll Walkthrough ✓ (navigates to `/scroll-walkthrough`)
+4. Complete Your First Reading
+5. Ask Leo Your First Question
+6. Take Your First Quiz
 
 Progress bar and completion tracking with localStorage persistence.
 
@@ -142,6 +181,8 @@ src/
 │   ├── SurveyResults.tsx    # Persona reveal
 │   ├── Paywall.tsx          # Subscription/pricing
 │   ├── ReadingGoals.tsx     # Reading goals + notifications
+│   ├── ScrollWalkthrough.tsx # Interactive scroll concept tour
+│   ├── DemoScroll.tsx       # Hands-on demo scroll experience
 │   ├── Community.tsx        # Community preview (coming soon)
 │   ├── Read.tsx             # Bible reading engine + ActivityPanel
 │   ├── Index.tsx            # Home page
@@ -163,6 +204,7 @@ src/
 - Uses localStorage for onboarding state:
   - `profileOnboardingComplete`: Profile setup completion
   - `readingGoalsOnboardingComplete`: Reading goals setup completion
+  - `scrollWalkthroughComplete`: Scroll walkthrough completion
   - User preferences (reading goals, notification settings)
 
 ### Cross-Component Communication
@@ -202,9 +244,12 @@ interface Chapter {
 ✅ Survey system with 10 complete questions
 ✅ Persona reveal page (mock data - The Shepherd)
 ✅ Paywall with Denarii explanation and "free forever" messaging
+✅ Paywall with Free plan option and disabled trial button with disclaimer
 ✅ Profile onboarding (photo + testimony)
 ✅ Reading goals onboarding (4 frequency options + notifications)
-✅ OnboardingProgress tracking component
+✅ Scroll walkthrough (6-step interactive tour with demo elements)
+✅ Demo scroll page (fully interactive hands-on experience)
+✅ OnboardingProgress tracking component (6 tasks)
 ✅ Community preview with coming soon overlay
 ✅ Interactive Bible reading engine
 ✅ 5 sample chapters with scrollable content
@@ -338,4 +383,4 @@ Bottom sheet panel with interactive gestures:
 
 ---
 
-Last Updated: 2025-11-02
+Last Updated: 2025-11-05

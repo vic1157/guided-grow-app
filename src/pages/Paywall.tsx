@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Paywall = () => {
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual">("annual");
+  const [selectedPlan, setSelectedPlan] = useState<"free" | "monthly" | "annual">("annual");
 
   // Mock persona data - would come from user context/state
   const personaName = "The Shepherd";
@@ -35,6 +35,15 @@ const Paywall = () => {
   const valueProps = valuePropsByPersona.Shepherd;
 
   const pricingPlans = [
+    {
+      id: "free",
+      name: "Free",
+      price: "$0",
+      period: "/forever",
+      denarii: "Limited AI features",
+      badge: null,
+      savings: null,
+    },
     {
       id: "monthly",
       name: "Monthly",
@@ -208,7 +217,7 @@ const Paywall = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {pricingPlans.map((plan) => (
               <Card
                 key={plan.id}
@@ -217,7 +226,7 @@ const Paywall = () => {
                     ? "border-foreground bg-accent"
                     : "border-border bg-card hover:border-muted-foreground"
                 }`}
-                onClick={() => setSelectedPlan(plan.id as "monthly" | "annual")}
+                onClick={() => setSelectedPlan(plan.id as "free" | "monthly" | "annual")}
               >
                 {plan.badge && (
                   <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background">
@@ -232,7 +241,7 @@ const Paywall = () => {
                   </div>
                   <div className="space-y-0.5">
                     <p className="text-xs text-muted-foreground">{plan.denarii}</p>
-                    <p className="text-[10px] text-muted-foreground/70">to enhance with AI</p>
+                    
                   </div>
                   {plan.savings && (
                     <Badge variant="secondary" className="text-xs">
@@ -330,10 +339,18 @@ const Paywall = () => {
         <div className="space-y-4 max-w-md mx-auto pb-8">
           <Button
             onClick={handleStartTrial}
-            className="w-full h-14 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-semibold text-lg"
+            disabled={selectedPlan === "free"}
+            className="w-full h-14 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Start 7-Day Free Trial
           </Button>
+          {selectedPlan === "free" && (
+            <div className="p-3 bg-accent/50 border border-border rounded-lg">
+              <p className="text-xs text-muted-foreground text-center">
+                A 7-day free trial can only be selected with a paid plan. You can always cancel before the trial is over to not get charged.
+              </p>
+            </div>
+          )}
           <Button
             onClick={handleContinueFree}
             variant="ghost"

@@ -20,6 +20,7 @@ const OnboardingProgress = () => {
   // Check localStorage for completed tasks
   const isProfileComplete = localStorage.getItem("profileOnboardingComplete") === "true";
   const isReadingGoalsComplete = localStorage.getItem("readingGoalsOnboardingComplete") === "true";
+  const isScrollWalkthroughComplete = localStorage.getItem("scrollWalkthroughComplete") === "true";
 
   const [tasks, setTasks] = useState<OnboardingTask[]>([
     {
@@ -36,18 +37,24 @@ const OnboardingProgress = () => {
     },
     {
       id: "3",
+      title: "RYB Scroll Walkthrough",
+      description: "Understand how to track and interact with your Bible reading activity",
+      completed: isScrollWalkthroughComplete,
+    },
+    {
+      id: "4",
       title: "Complete Your First Reading",
       description: "Generate your first scroll",
       completed: false,
     },
     {
-      id: "4",
+      id: "5",
       title: "Ask Leo Your First Question",
       description: "Ask Leo a Bible-related question and get an instant-response",
       completed: false,
     },
     {
-      id: "5",
+      id: "6",
       title: "Take Your First Quiz",
       description: "Test your knowledge on what you read",
       completed: false,
@@ -63,6 +70,7 @@ const OnboardingProgress = () => {
     const handleStorageChange = () => {
       const isProfileComplete = localStorage.getItem("profileOnboardingComplete") === "true";
       const isReadingGoalsComplete = localStorage.getItem("readingGoalsOnboardingComplete") === "true";
+      const isScrollWalkthroughComplete = localStorage.getItem("scrollWalkthroughComplete") === "true";
 
       setTasks((prevTasks) =>
         prevTasks.map((task) => {
@@ -70,6 +78,8 @@ const OnboardingProgress = () => {
             return { ...task, completed: isProfileComplete };
           } else if (task.id === "2") {
             return { ...task, completed: isReadingGoalsComplete };
+          } else if (task.id === "3") {
+            return { ...task, completed: isScrollWalkthroughComplete };
           }
           return task;
         })
@@ -95,6 +105,10 @@ const OnboardingProgress = () => {
     } else if (taskId === "2") {
       // Set Your Reading Goals
       navigate("/reading-goals?onboarding=true");
+      return;
+    } else if (taskId === "3") {
+      // RYB Scroll Walkthrough
+      navigate("/scroll-walkthrough");
       return;
     }
 
