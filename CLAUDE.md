@@ -262,6 +262,16 @@ interface Chapter {
 ✅ AI feature access buttons (Start Scroll, Chapter Context, Ask Leo/AI, Add Question)
 ✅ Reading timer for active sessions
 
+## Changes on `olu/ryb-57-ryb-scroll-walkthrough` Branch
+
+### ScrollWalkthrough.tsx
+- **Show More Button Contrast**: Updated the "Show More" button in Step 3 to use `variant="outline"` with added `bg-background/50`, `border-foreground/20`, and hover effects for better visibility.
+- **Collapsible Personal Reflection**: Added `expandedReflection` state to Step 6. The reflection now starts collapsed (showing ~3 lines) with a "Tap to read full reflection" overlay. Clicking expands to show full text.
+
+### DemoScroll.tsx
+- **Initial Summary State**: Changed `expandedSummary` initial state from `true` to `false`, so the summary starts collapsed and shows "Show More" by default.
+- **Show More Button Contrast**: Updated the button to use `variant="outline"` with `bg-secondary/80` and `border-secondary-foreground/20` for a darker, more contrasted appearance.
+
 ## Known Limitations / Future Work
 
 ### Not Yet Implemented
@@ -346,16 +356,14 @@ Bottom sheet panel with interactive gestures:
 
 ## Git Status
 
-- Current branch: `post-lovable-v1`
+- Current branch: `olu/ryb-57-ryb-scroll-walkthrough`
 - Main branch: `main`
-- Working directory: Clean
+- Working directory: Modified (bun.lockb, package.json)
 
-## Recent Commits
-- Add Survey page and update App routing
-- Refine UI styling with enhanced visual hierarchy
-- Refactor home page layout
-- Fix footer spacing and centering
-- Reorder home page cards
+## Recent Commits (olu/ryb-57-ryb-scroll-walkthrough)
+- feat: implement collapsible reflection UI, update button styles, and add new dependencies
+- feat: expand scroll walkthrough to 8 steps with mock activity panel and add question type explanation popover to demo scroll
+- feat: add scroll walkthrough onboarding and free pricing tier
 
 ## Notes for Future Development
 
@@ -386,4 +394,4 @@ Bottom sheet panel with interactive gestures:
 
 ---
 
-Last Updated: 2025-12-01
+Last Updated: 2025-12-08
