@@ -15,11 +15,17 @@ import {
   Globe,
   ThumbsUp,
   ThumbsDown,
+  HelpCircle,
 } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const DemoScroll = () => {
   const navigate = useNavigate();
-  const [expandedSummary, setExpandedSummary] = useState(true);
+  const [expandedSummary, setExpandedSummary] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<{
     understanding: boolean;
     discussion: boolean;
@@ -89,9 +95,8 @@ const DemoScroll = () => {
           <Card className="overflow-hidden border-2 border-foreground/20">
             <div className="p-4 space-y-3">
               <div
-                className={`space-y-3 text-sm text-muted-foreground transition-all ${
-                  expandedSummary ? "max-h-96" : "max-h-24 overflow-hidden"
-                }`}
+                className={`space-y-3 text-sm text-muted-foreground transition-all ${expandedSummary ? "max-h-96" : "max-h-24 overflow-hidden"
+                  }`}
               >
                 <p>
                   Contains the beginning of Jesus' Sermon on the Mount, starting with the Beatitudes
@@ -111,8 +116,8 @@ const DemoScroll = () => {
 
               <Button
                 onClick={() => setExpandedSummary(!expandedSummary)}
-                variant="ghost"
-                className="w-full text-foreground hover:bg-accent"
+                variant="outline"
+                className="w-full text-foreground bg-secondary/80 border-secondary-foreground/20 hover:bg-secondary hover:border-secondary-foreground/40"
               >
                 {expandedSummary ? "Show Less" : "Show More"}
               </Button>
@@ -138,7 +143,32 @@ const DemoScroll = () => {
         {/* Questions Section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-semibold text-foreground">Questions</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-semibold text-foreground">Questions</h3>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-5 w-5 rounded-full p-0 hover:bg-muted">
+                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                    <span className="sr-only">Question types info</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-4" align="start" collisionPadding={16}>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm">
+                        <span className="font-semibold text-foreground">Understanding</span> <span className="text-muted-foreground">questions help establish what the text says and means at a basic level.</span>
+                      </p>
+                    </div>
+                    <Separator />
+                    <div>
+                      <p className="text-sm">
+                        <span className="font-semibold text-foreground">Discussion</span> <span className="text-muted-foreground">questions explore deeper meanings, implications and connections within a particular scripture.</span>
+                      </p>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
             <Button size="sm" className="h-8 rounded-lg">
               + Add
             </Button>
@@ -161,9 +191,8 @@ const DemoScroll = () => {
                 <span className="font-medium text-foreground">Understanding (1)</span>
               </div>
               <ChevronRight
-                className={`h-5 w-5 text-muted-foreground transition-transform ${
-                  expandedQuestions.understanding ? "rotate-90" : ""
-                }`}
+                className={`h-5 w-5 text-muted-foreground transition-transform ${expandedQuestions.understanding ? "rotate-90" : ""
+                  }`}
               />
             </button>
 
@@ -204,9 +233,8 @@ const DemoScroll = () => {
                 <span className="font-medium text-foreground">Discussion (0)</span>
               </div>
               <ChevronRight
-                className={`h-5 w-5 text-muted-foreground transition-transform ${
-                  expandedQuestions.discussion ? "rotate-90" : ""
-                }`}
+                className={`h-5 w-5 text-muted-foreground transition-transform ${expandedQuestions.discussion ? "rotate-90" : ""
+                  }`}
               />
             </button>
 
@@ -237,11 +265,10 @@ const DemoScroll = () => {
           <div className="space-y-2">
             <button
               onClick={() => setSelectedVisibility("private")}
-              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${
-                selectedVisibility === "private"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground"
-              }`}
+              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "private"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
+                }`}
             >
               <Lock className="h-5 w-5 text-foreground" />
               <div className="flex-1 text-left">
@@ -249,9 +276,8 @@ const DemoScroll = () => {
                 <p className="text-xs text-muted-foreground">Only you can see this</p>
               </div>
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  selectedVisibility === "private" ? "border-foreground bg-foreground" : "border-border"
-                }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedVisibility === "private" ? "border-foreground bg-foreground" : "border-border"
+                  }`}
               >
                 {selectedVisibility === "private" && (
                   <div className="w-2 h-2 bg-background rounded-full" />
@@ -261,11 +287,10 @@ const DemoScroll = () => {
 
             <button
               onClick={() => setSelectedVisibility("friends")}
-              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${
-                selectedVisibility === "friends"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground"
-              }`}
+              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "friends"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
+                }`}
             >
               <Users className="h-5 w-5 text-foreground" />
               <div className="flex-1 text-left">
@@ -273,9 +298,8 @@ const DemoScroll = () => {
                 <p className="text-xs text-muted-foreground">Visible to your friends</p>
               </div>
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  selectedVisibility === "friends" ? "border-foreground bg-foreground" : "border-border"
-                }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedVisibility === "friends" ? "border-foreground bg-foreground" : "border-border"
+                  }`}
               >
                 {selectedVisibility === "friends" && (
                   <div className="w-2 h-2 bg-background rounded-full" />
@@ -285,11 +309,10 @@ const DemoScroll = () => {
 
             <button
               onClick={() => setSelectedVisibility("public")}
-              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${
-                selectedVisibility === "public"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground"
-              }`}
+              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "public"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
+                }`}
             >
               <Globe className="h-5 w-5 text-foreground" />
               <div className="flex-1 text-left">
@@ -297,9 +320,8 @@ const DemoScroll = () => {
                 <p className="text-xs text-muted-foreground">Anyone can see this</p>
               </div>
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  selectedVisibility === "public" ? "border-foreground bg-foreground" : "border-border"
-                }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedVisibility === "public" ? "border-foreground bg-foreground" : "border-border"
+                  }`}
               >
                 {selectedVisibility === "public" && (
                   <div className="w-2 h-2 bg-background rounded-full" />

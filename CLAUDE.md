@@ -57,19 +57,22 @@ RYB is a Bible reading application designed to help users develop consistent Bib
 - Navigates to home after completion
 
 #### Scroll Walkthrough (`/scroll-walkthrough`)
-- 6-step interactive tour explaining the Scroll concept
+- 8-step interactive tour explaining the Scroll concept
 - Full-screen walkthrough with progress indicators
 - Interactive demo elements:
   - Expandable AI summary with demo text
-  - Question categories (Understanding & Discussion) with example questions
+  - Question categories (Understanding & Discussion) with example questions and explanation popover
+  - Mock interactive Activity Panel for "Capture Questions" step
   - Visibility settings (Private, Friends Only, Public) with radio selectors
 - Step progression:
   1. Welcome & Introduction - Overview of what Scrolls are
   2. Scroll Overview - Reading session metadata (passage, time, verses)
   3. AI-Generated Summary - Chapter context and themes
-  4. Questions Feature - Engaging with Scripture through questions
-  5. Personal Reflection - Journaling and visibility settings
-  6. Complete & Ready - Recap with dual CTAs
+  4. Questions Feature - Engaging with Scripture through questions (with type definitions)
+  5. Capture Questions - Interactive mock panel demonstrating "Add Question" flow
+  6. Personal Reflection - Journaling and visibility settings (entire scroll privacy)
+  7. Starting a Scroll - Explaining metrics, tracking, and entry points
+  8. Complete & Ready - Recap with dual CTAs
 - Completion options:
   - "Try Demo Scroll" → Navigates to `/demo-scroll` (interactive demo)
   - "Back to Home" → Navigates to `/home`
@@ -81,7 +84,7 @@ RYB is a Bible reading application designed to help users develop consistent Bib
 - Complete scroll interface with all features:
   - Scroll header (passage title, verse range, time estimate)
   - Expandable AI-generated summary with feedback buttons
-  - Questions section (Understanding & Discussion categories)
+  - Questions section (Understanding & Discussion categories) with explanation popover
   - Editable personal reflection textarea
   - Visibility settings (Private, Friends Only, Public)
   - Upload scroll button with success message
@@ -247,7 +250,7 @@ interface Chapter {
 ✅ Paywall with Free plan option and disabled trial button with disclaimer
 ✅ Profile onboarding (photo + testimony)
 ✅ Reading goals onboarding (4 frequency options + notifications)
-✅ Scroll walkthrough (6-step interactive tour with demo elements)
+✅ Scroll walkthrough (8-step interactive tour with demo elements and mock interaction)
 ✅ Demo scroll page (fully interactive hands-on experience)
 ✅ OnboardingProgress tracking component (6 tasks)
 ✅ Community preview with coming soon overlay
@@ -383,4 +386,4 @@ Bottom sheet panel with interactive gestures:
 
 ---
 
-Last Updated: 2025-11-05
+Last Updated: 2025-12-01
