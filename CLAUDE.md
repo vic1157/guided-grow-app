@@ -158,7 +158,113 @@ Preview implementation with "Coming Soon" overlay:
   - Encouragements and comments
 - Overlay reappears on every visit to maintain excitement
 
-### 5. Home Page (`/home`)
+### 5. Scripture Explorer (`/scripture-explorer`)
+
+Central hub for accessing scrolls, AI chat, and quiz features. Accessible via the middle "Create" button in Footer navigation.
+
+**Main Features:**
+- **4 Action Buttons**: New Chat, New Quiz, All Scrolls, All Chats
+- **Toggleable List View**: Filter between scrolls and chats
+- **Empty States**: Helpful messaging when no data exists
+- **Mock Data**: 3 sample scrolls and 2 sample chats
+
+#### AI Chat Interface (`/chat`)
+Interactive conversation with Leo AI assistant:
+- Message history display with user and Leo messages
+- Real-time text input with send button
+- Auto-scroll to latest message
+- Support for existing chats via URL parameter (`/chat?id={chatId}`)
+- Mock responses with 1-second delay
+- Enter key to send messages
+- Clean left/right aligned message bubbles
+
+#### Quiz System (`/new-quiz` and quiz taking)
+Complete quiz functionality:
+- **Quiz Selection** (`/new-quiz`): Choose from available scrolls to generate quiz
+- **Multi-Question Interface**: Progress indicator, question counter, navigation
+- **Answer Selection**: Radio button options with visual feedback
+- **Quiz Navigation**: Previous/Next buttons, disabled until answer selected
+- **Results Display**: Score calculation, per-question review with explanations
+- **Correct/Incorrect Indicators**: Visual feedback with checkmarks and X marks
+- **Retake Functionality**: Option to retake quiz after completion
+- **Auto-Start**: URL parameter support (`?startQuiz=true`)
+
+#### Scroll Detail View (`/scroll/:id`)
+Comprehensive scroll information and quiz integration:
+- **Scroll Header**: Title, scripture reference, duration, reading time
+- **Summary Section**: AI-generated chapter summary
+- **Personal Reflection**: Display user's notes and thoughts
+- **Quiz Status**: Shows previous score if quiz was taken
+- **Quiz Integration**: Seamless transition from scroll view to quiz taking
+- **Three Views**:
+  1. Scroll Information (default)
+  2. Quiz Taking (interactive questions)
+  3. Quiz Results (score and review)
+
+**Components:**
+- `ScrollListItem.tsx`: Reusable scroll card with icon, metadata, quiz status
+- `ChatListItem.tsx`: Reusable chat card with last message preview
+- `ChatMessage.tsx`: Message bubble component for Leo and user messages
+- `QuizQuestion.tsx`: Quiz question with radio options and explanations
+
+**Navigation Flow:**
+```
+Footer "Create" Button → /scripture-explorer
+    ├── New Chat → /chat (new conversation)
+    ├── New Quiz → /new-quiz → select scroll → /scroll/:id?startQuiz=true
+    ├── All Scrolls → click scroll → /scroll/:id
+    └── All Chats → click chat → /chat?id={chatId}
+```
+
+**Data Structures:**
+```typescript
+interface Scroll {
+  id: string;
+  title: string;
+  scriptureReference: string;
+  duration: string;
+  timestamp: string;
+  hasQuiz: boolean;
+  quizScore?: { correct: number; total: number };
+  summary: string;
+  questions: Question[];
+  reflection: string;
+  readingTime: string;
+}
+
+interface Quiz {
+  id: string;
+  scrollId: string;
+  title: string;
+  questions: QuizQuestion[];
+}
+
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+  verseReference?: string;
+}
+
+interface Chat {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ChatMessage {
+  id: string;
+  sender: 'user' | 'leo';
+  content: string;
+  timestamp: string;
+}
+```
+
+### 6. Home Page (`/home`)
 
 Features OnboardingProgress component that tracks:
 1. Complete Your Profile ✓ (navigates to `/profile?onboarding=true`)
@@ -188,17 +294,25 @@ src/
 │   ├── DemoScroll.tsx       # Hands-on demo scroll experience
 │   ├── Community.tsx        # Community preview (coming soon)
 │   ├── Read.tsx             # Bible reading engine + ActivityPanel
+│   ├── ScriptureExplorer.tsx # Scripture Explorer hub (NEW)
+│   ├── Chat.tsx             # AI chat interface with Leo (NEW)
+│   ├── NewQuiz.tsx          # Quiz selection page (NEW)
+│   ├── ScrollDetail.tsx     # Scroll detail + quiz taking (NEW)
 │   ├── Index.tsx            # Home page
 │   ├── Profile.tsx          # User profile + onboarding
 │   └── NotFound.tsx         # 404 page
 ├── components/
-│   ├── Footer.tsx           # App footer
+│   ├── Footer.tsx           # App footer (updated Create button path)
 │   ├── OnboardingProgress.tsx  # Task tracker widget
 │   ├── ActivityPanel.tsx    # Draggable AI features panel (Read page)
+│   ├── ScrollListItem.tsx   # Scroll list card component (NEW)
+│   ├── ChatListItem.tsx     # Chat list card component (NEW)
+│   ├── ChatMessage.tsx      # Chat message bubble (NEW)
+│   ├── QuizQuestion.tsx     # Quiz question component (NEW)
 │   └── ui/                  # Shadcn UI components
 ├── lib/
 │   └── utils.ts             # Utility functions (cn helper)
-└── App.tsx                  # Main routing configuration
+└── App.tsx                  # Main routing configuration (updated with new routes)
 ```
 
 ## Key Implementation Details

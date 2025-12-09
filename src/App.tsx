@@ -18,6 +18,10 @@ import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import ScrollWalkthrough from "./pages/ScrollWalkthrough";
 import DemoScroll from "./pages/DemoScroll";
+import ScriptureExplorer from "./pages/ScriptureExplorer";
+import Chat from "./pages/Chat";
+import NewQuiz from "./pages/NewQuiz";
+import ScrollDetail from "./pages/ScrollDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +48,10 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/scroll-walkthrough" element={<ScrollWalkthrough />} />
           <Route path="/demo-scroll" element={<DemoScroll />} />
+          <Route path="/scripture-explorer" element={<ScriptureExplorer />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/new-quiz" element={<NewQuiz />} />
+          <Route path="/scroll/:id" element={<ScrollDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,0 +1,529 @@
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import QuizQuestion from "@/components/QuizQuestion";
+import {
+  ChevronLeft,
+  Clock,
+  ChevronRight,
+  Award,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+
+// Interfaces
+interface Question {
+  id: string;
+  type: 'understanding' | 'discussion';
+  text: string;
+  verseReference?: string;
+}
+
+interface Scroll {
+  id: string;
+  title: string;
+  scriptureReference: string;
+  duration: string;
+  timestamp: string;
+  hasQuiz: boolean;
+  quizScore?: { correct: number; total: number };
+  summary: string;
+  questions: Question[];
+  reflection: string;
+  readingTime: string;
+}
+
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+  verseReference?: string;
+}
+
+interface Quiz {
+  id: string;
+  scrollId: string;
+  title: string;
+  questions: QuizQuestion[];
+}
+
+// Mock data
+const mockScrolls: Scroll[] = [
+  {
+    id: 'scroll-1',
+    title: 'Jesus Rises, Sends Disciples',
+    scriptureReference: 'Matthew 5:1 - Matthew 5:48',
+    duration: '8 mins',
+    timestamp: '2hr ago',
+    hasQuiz: true,
+    quizScore: { correct: 10, total: 15 },
+    summary: 'Contains the beginning of Jesus\' Sermon on the Mount, starting with the Beatitudes that describe the blessed nature of the humble, merciful, and peacemakers. Jesus then declares his followers to be "salt of the earth" and "light of the world" before addressing his relationship to the Law.',
+    questions: [
+      {
+        id: 'q1',
+        type: 'understanding',
+        text: 'What did Jesus mean when he said he came to "fulfill the law" rather than abolish it?',
+        verseReference: 'Matthew 5:17'
+      }
+    ],
+    reflection: 'After reading Matthew 5, I find myself struck by the radical nature of Jesus\' call to love enemies and pray for those who persecute us. In my own life, I\'ve been holding onto resentment toward a colleague, but this passage challenges me to see that my anger is keeping me captive to bitterness.',
+    readingTime: '7:23'
+  },
+  {
+    id: 'scroll-2',
+    title: 'The Lord Is My Shepherd',
+    scriptureReference: 'Psalm 23:1 - Psalm 23:6',
+    duration: '6 mins',
+    timestamp: '18hr ago',
+    hasQuiz: true,
+    quizScore: { correct: 5, total: 7 },
+    summary: 'David\'s beloved psalm about God as shepherd, expressing complete trust in God\'s provision and protection through all circumstances.',
+    questions: [],
+    reflection: 'This psalm brings me such comfort. The imagery of God as a shepherd is so reassuring.',
+    readingTime: '4:12'
+  },
+  {
+    id: 'scroll-3',
+    title: 'In the Beginning',
+    scriptureReference: 'Genesis 1:1 - Genesis 1:31',
+    duration: '20 mins',
+    timestamp: '2 days ago',
+    hasQuiz: false,
+    summary: 'The account of God creating the heavens and earth in six days, culminating with humanity made in His image.',
+    questions: [],
+    reflection: '',
+    readingTime: '18:45'
+  },
+];
+
+const mockQuizzes: Quiz[] = [
+  {
+    id: 'quiz-1',
+    scrollId: 'scroll-1',
+    title: 'Matthew 5 Understanding Quiz',
+    questions: [
+      {
+        id: 'qq1',
+        question: 'In the Beatitudes, who did Jesus say would inherit the earth?',
+        options: [
+          'The poor in spirit',
+          'The humble',
+          'Those who mourn',
+          'The peacemakers'
+        ],
+        correctAnswer: 1,
+        explanation: 'Jesus said "God blesses those who are humble, for they will inherit the whole earth" (Matthew 5:5, NLT)',
+        verseReference: 'Matthew 5:5'
+      },
+      {
+        id: 'qq2',
+        question: 'What metaphor did Jesus use to describe his followers?',
+        options: [
+          'Stars of the night',
+          'Rivers of living water',
+          'Salt of the earth and light of the world',
+          'Trees planted by streams'
+        ],
+        correctAnswer: 2,
+        explanation: 'Jesus called believers "the salt of the earth" and "the light of the world" to emphasize their influence and purpose.',
+        verseReference: 'Matthew 5:13-14'
+      },
+      {
+        id: 'qq3',
+        question: 'According to Jesus, what should we do when someone strikes us on the right cheek?',
+        options: [
+          'Strike them back',
+          'Turn the other cheek',
+          'Call the authorities',
+          'Run away'
+        ],
+        correctAnswer: 1,
+        explanation: 'Jesus teaches radical non-retaliation: "turn to them the other cheek also" (Matthew 5:39)',
+        verseReference: 'Matthew 5:39'
+      }
+    ]
+  },
+  {
+    id: 'quiz-2',
+    scrollId: 'scroll-2',
+    title: 'Psalm 23 Comprehension Quiz',
+    questions: [
+      {
+        id: 'qq4',
+        question: 'What does the psalmist say about walking through the valley of the shadow of death?',
+        options: [
+          'I will be afraid',
+          'I will fear no evil',
+          'I will run away',
+          'I will call for help'
+        ],
+        correctAnswer: 1,
+        explanation: 'David expresses complete confidence: "I will fear no evil, for you are with me"',
+        verseReference: 'Psalm 23:4'
+      },
+      {
+        id: 'qq5',
+        question: 'What does God prepare in the presence of enemies?',
+        options: [
+          'A battle plan',
+          'A feast',
+          'An escape route',
+          'A shield'
+        ],
+        correctAnswer: 1,
+        explanation: 'God prepares "a feast" (or table) even in the presence of enemies, showing His provision and protection.',
+        verseReference: 'Psalm 23:5'
+      }
+    ]
+  }
+];
+
+const ScrollDetail = () => {
+  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const [scroll, setScroll] = useState<Scroll | null>(null);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<(number | null)[]>([]);
+  const [showResults, setShowResults] = useState(false);
+
+  // Load scroll and quiz data
+  useEffect(() => {
+    if (!id) return;
+
+    const foundScroll = mockScrolls.find(s => s.id === id);
+    setScroll(foundScroll || null);
+
+    const foundQuiz = mockQuizzes.find(q => q.scrollId === id);
+    setQuiz(foundQuiz || null);
+
+    // Initialize user answers array
+    if (foundQuiz) {
+      setUserAnswers(new Array(foundQuiz.questions.length).fill(null));
+    }
+
+    // Check if should auto-start quiz
+    if (searchParams.get('startQuiz') === 'true' && foundQuiz) {
+      setShowQuiz(true);
+    }
+  }, [id, searchParams]);
+
+  const handleStartQuiz = () => {
+    setShowQuiz(true);
+    setCurrentQuestionIndex(0);
+    setShowResults(false);
+    if (quiz) {
+      setUserAnswers(new Array(quiz.questions.length).fill(null));
+    }
+  };
+
+  const handleAnswerSelect = (answerIndex: number) => {
+    const newAnswers = [...userAnswers];
+    newAnswers[currentQuestionIndex] = answerIndex;
+    setUserAnswers(newAnswers);
+  };
+
+  const handleNext = () => {
+    if (quiz && currentQuestionIndex < quiz.questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
+  const handleSubmit = () => {
+    setShowResults(true);
+  };
+
+  const calculateScore = () => {
+    if (!quiz) return { correct: 0, total: 0 };
+
+    const correct = userAnswers.reduce((acc, answer, index) => {
+      return answer === quiz.questions[index].correctAnswer ? acc + 1 : acc;
+    }, 0);
+
+    return { correct, total: quiz.questions.length };
+  };
+
+  const handleBackToScroll = () => {
+    setShowQuiz(false);
+    setShowResults(false);
+    setCurrentQuestionIndex(0);
+  };
+
+  if (!scroll) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Scroll not found</p>
+      </div>
+    );
+  }
+
+  // Results View
+  if (showResults && quiz) {
+    const score = calculateScore();
+    const percentage = Math.round((score.correct / score.total) * 100);
+
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
+          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+            <h1 className="text-lg font-semibold text-foreground">Quiz Results</h1>
+          </div>
+        </header>
+
+        <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+          {/* Score Card */}
+          <Card className="p-6 text-center space-y-4 border-2 border-foreground/20">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent">
+              <Award className="h-10 w-10 text-foreground" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold text-foreground">
+                {score.correct}/{score.total}
+              </h2>
+              <p className="text-muted-foreground mt-1">{percentage}% Correct</p>
+            </div>
+          </Card>
+
+          {/* Question Review */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Review Your Answers</h3>
+            {quiz.questions.map((question, index) => {
+              const userAnswer = userAnswers[index];
+              const isCorrect = userAnswer === question.correctAnswer;
+
+              return (
+                <Card key={question.id} className="p-4 space-y-3 border-2 border-foreground/10">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      {isCorrect ? (
+                        <CheckCircle2 className="h-6 w-6 text-green-600" />
+                      ) : (
+                        <XCircle className="h-6 w-6 text-red-600" />
+                      )}
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <p className="font-semibold text-foreground">{question.question}</p>
+                      {question.verseReference && (
+                        <p className="text-xs text-muted-foreground italic">{question.verseReference}</p>
+                      )}
+                      <div className="space-y-1 text-sm">
+                        <p className={isCorrect ? "text-green-600" : "text-red-600"}>
+                          Your answer: {userAnswer !== null ? question.options[userAnswer] : "Not answered"}
+                        </p>
+                        {!isCorrect && (
+                          <p className="text-green-600">
+                            Correct answer: {question.options[question.correctAnswer]}
+                          </p>
+                        )}
+                      </div>
+                      {question.explanation && (
+                        <p className="text-sm text-muted-foreground pt-2 border-t border-border">
+                          <span className="font-semibold">Explanation: </span>
+                          {question.explanation}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={handleBackToScroll}
+              className="flex-1"
+            >
+              Back to Scroll
+            </Button>
+            <Button
+              onClick={handleStartQuiz}
+              className="flex-1 bg-foreground text-background hover:bg-foreground/90"
+            >
+              Retake Quiz
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Quiz View
+  if (showQuiz && quiz) {
+    const currentQuestion = quiz.questions[currentQuestionIndex];
+    const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
+    const canProceed = userAnswers[currentQuestionIndex] !== null;
+
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
+          <div className="max-w-2xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-lg font-semibold text-foreground">{quiz.title}</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackToScroll}
+              >
+                Cancel
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Question {currentQuestionIndex + 1} of {quiz.questions.length}
+            </p>
+            <div className="h-2 bg-muted rounded-full mt-2 overflow-hidden">
+              <div
+                className="h-full bg-foreground transition-all"
+                style={{
+                  width: `${((currentQuestionIndex + 1) / quiz.questions.length) * 100}%`
+                }}
+              />
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+          <QuizQuestion
+            question={currentQuestion}
+            selectedAnswer={userAnswers[currentQuestionIndex]}
+            onAnswerSelect={handleAnswerSelect}
+            showCorrect={false}
+          />
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentQuestionIndex === 0}
+              className="flex-1"
+            >
+              Previous
+            </Button>
+            {isLastQuestion ? (
+              <Button
+                onClick={handleSubmit}
+                disabled={!canProceed}
+                className="flex-1 bg-foreground text-background hover:bg-foreground/90"
+              >
+                Submit Quiz
+              </Button>
+            ) : (
+              <Button
+                onClick={handleNext}
+                disabled={!canProceed}
+                className="flex-1 bg-foreground text-background hover:bg-foreground/90"
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Scroll View
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/scripture-explorer')}
+            className="flex items-center gap-2"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            <span>Back</span>
+          </Button>
+          <h1 className="flex-1 text-lg font-semibold text-foreground truncate">{scroll.title}</h1>
+        </div>
+      </header>
+
+      <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        {/* Scroll Header */}
+        <Card className="p-6 space-y-3 border-2 border-foreground/20">
+          <h2 className="text-2xl font-bold text-foreground">{scroll.title}</h2>
+          <p className="text-muted-foreground">{scroll.scriptureReference}</p>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Clock className="h-4 w-4" />
+            <span className="text-sm">{scroll.duration} • {scroll.readingTime} reading time</span>
+          </div>
+        </Card>
+
+        {/* Summary */}
+        <div className="space-y-3">
+          <h3 className="text-xl font-semibold text-foreground">Summary</h3>
+          <Card className="p-4 border-2 border-foreground/20">
+            <p className="text-sm text-muted-foreground leading-relaxed">{scroll.summary}</p>
+          </Card>
+        </div>
+
+        {/* Personal Reflection */}
+        {scroll.reflection && (
+          <div className="space-y-3">
+            <h3 className="text-xl font-semibold text-foreground">Personal Reflection</h3>
+            <Card className="p-4 border-2 border-foreground/20">
+              <p className="text-sm text-foreground leading-relaxed">{scroll.reflection}</p>
+            </Card>
+          </div>
+        )}
+
+        <Separator />
+
+        {/* Quiz Section */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-foreground">Quiz</h3>
+          {scroll.hasQuiz && quiz ? (
+            <div className="space-y-3">
+              {scroll.quizScore && (
+                <Card className="p-4 bg-accent border-2 border-foreground/20">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-foreground">Previous Score</p>
+                      <p className="text-sm text-muted-foreground">
+                        {scroll.quizScore.correct}/{scroll.quizScore.total} correct
+                      </p>
+                    </div>
+                    <Award className="h-6 w-6 text-foreground" />
+                  </div>
+                </Card>
+              )}
+              <Button
+                onClick={handleStartQuiz}
+                className="w-full h-14 bg-foreground text-background hover:bg-foreground/90 text-lg font-semibold"
+              >
+                {scroll.quizScore ? 'Retake Quiz' : 'Take Quiz'}
+              </Button>
+            </div>
+          ) : (
+            <Card className="p-6 text-center border-2 border-foreground/20">
+              <p className="text-muted-foreground">No quiz available for this scroll yet</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Quizzes will be generated automatically in the future
+              </p>
+            </Card>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default ScrollDetail;
