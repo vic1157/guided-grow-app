@@ -25,7 +25,7 @@ import {
 
 const DemoScroll = () => {
   const navigate = useNavigate();
-  const [expandedSummary, setExpandedSummary] = useState(true);
+  const [expandedSummary, setExpandedSummary] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<{
     understanding: boolean;
     discussion: boolean;
@@ -116,8 +116,8 @@ const DemoScroll = () => {
 
               <Button
                 onClick={() => setExpandedSummary(!expandedSummary)}
-                variant="ghost"
-                className="w-full text-foreground hover:bg-accent"
+                variant="outline"
+                className="w-full text-foreground bg-secondary/80 border-secondary-foreground/20 hover:bg-secondary hover:border-secondary-foreground/40"
               >
                 {expandedSummary ? "Show Less" : "Show More"}
               </Button>
@@ -266,8 +266,8 @@ const DemoScroll = () => {
             <button
               onClick={() => setSelectedVisibility("private")}
               className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "private"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
                 }`}
             >
               <Lock className="h-5 w-5 text-foreground" />
@@ -288,8 +288,8 @@ const DemoScroll = () => {
             <button
               onClick={() => setSelectedVisibility("friends")}
               className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "friends"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
                 }`}
             >
               <Users className="h-5 w-5 text-foreground" />
@@ -310,8 +310,8 @@ const DemoScroll = () => {
             <button
               onClick={() => setSelectedVisibility("public")}
               className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "public"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
                 }`}
             >
               <Globe className="h-5 w-5 text-foreground" />

@@ -38,6 +38,7 @@ const ScrollWalkthrough = () => {
   });
   const [selectedVisibility, setSelectedVisibility] = useState<"private" | "friends" | "public">("public");
   const [mockPanelExpanded, setMockPanelExpanded] = useState(false);
+  const [expandedReflection, setExpandedReflection] = useState(false);
 
   const totalSteps = 8;
 
@@ -220,8 +221,8 @@ const ScrollWalkthrough = () => {
 
                     <Button
                       onClick={() => setExpandedSummary(!expandedSummary)}
-                      variant="ghost"
-                      className="w-full text-foreground hover:bg-accent"
+                      variant="outline"
+                      className="w-full text-foreground bg-background/50 border-foreground/20 hover:bg-accent hover:border-foreground/40"
                     >
                       {expandedSummary ? "Show Less" : "Show More"}
                     </Button>
@@ -487,10 +488,22 @@ const ScrollWalkthrough = () => {
                 <div className="border-2 border-foreground/20 rounded-lg p-4 bg-card space-y-4">
                   <div>
                     <h3 className="font-semibold text-foreground mb-3">Personal Reflection</h3>
-                    <div className="bg-background border border-border rounded-lg p-3 min-h-32">
-                      <p className="text-sm text-muted-foreground italic">
+                    <div
+                      className={`bg-background border border-border rounded-lg p-3 transition-all cursor-pointer hover:bg-accent/50 group relative ${expandedReflection ? "min-h-32" : "h-24 overflow-hidden"
+                        }`}
+                      onClick={() => setExpandedReflection(!expandedReflection)}
+                    >
+                      <p className={`text-sm text-muted-foreground italic ${expandedReflection ? "" : "line-clamp-3"}`}>
                         After reading Matthew 5, I find myself struck by the radical nature of Jesus' call to love enemies and pray for those who persecute us. In my own life, I've been holding onto resentment toward a colleague who undermined my work, but this passage challenges me to see that my anger, however justified it feels, is keeping me captive to bitterness rather than free me to live out God's perfect love.
                       </p>
+
+                      {!expandedReflection && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent flex items-end justify-center pb-2">
+                          <span className="text-xs font-medium text-foreground bg-background/80 px-2 py-1 rounded-full shadow-sm border border-border group-hover:bg-background">
+                            Tap to read full reflection
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
