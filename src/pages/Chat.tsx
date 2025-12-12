@@ -192,7 +192,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-background" style={{ height: '100vh', height: '100dvh' }}>
+    <div className="fixed inset-0 flex flex-col bg-background" style={{ height: '100vh', height: '100dvh', overflow: 'hidden' }}>
       {/* Header */}
       <header className="flex-shrink-0 bg-card border-b-2 border-foreground/30 z-10">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -213,27 +213,33 @@ const Chat = () => {
       {/* Messages */}
       <main 
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto overscroll-contain min-h-0"
+        className="flex-1 flex flex-col min-h-0"
         style={{ 
           paddingBottom: keyboardHeight > 0 ? '8px' : '0px',
-          transition: 'padding-bottom 0.2s ease-out'
+          transition: 'padding-bottom 0.2s ease-out',
+          overflow: 'hidden'
         }}
       >
-        <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
-          {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
-          {isLoading && (
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-sm font-semibold">L</span>
+        <div className="flex-1 overflow-y-auto overscroll-none" style={{ 
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'none'
+        }}>
+          <div className="max-w-2xl mx-auto px-4 py-6 space-y-4 min-h-full flex flex-col justify-end">
+            {messages.map((message) => (
+              <ChatMessage key={message.id} message={message} />
+            ))}
+            {isLoading && (
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
+                  <span className="text-sm font-semibold">L</span>
+                </div>
+                <div className="bg-muted rounded-lg p-3">
+                  <p className="text-sm text-muted-foreground">Leo is typing...</p>
+                </div>
               </div>
-              <div className="bg-muted rounded-lg p-3">
-                <p className="text-sm text-muted-foreground">Leo is typing...</p>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
       </main>
 
