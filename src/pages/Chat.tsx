@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ChatMessage from "@/components/ChatMessage";
 import { Button } from "@/components/ui/button";
@@ -82,12 +82,43 @@ const Chat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Handle keyboard visibility on mobile devices
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== 'undefined' && window.visualViewport) {
+        const viewport = window.visualViewport;
+        const keyboardHeight = window.innerHeight - viewport.height;
+        setKeyboardHeight(keyboardHeight);
+        
+        // Scroll to bottom when keyboard appears
+        if (keyboardHeight > 0) {
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      }
+    };
+
+    if (typeof window !== 'undefined' && window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      window.visualViewport.addEventListener('scroll', handleResize);
+      
+      return () => {
+        window.visualViewport?.removeEventListener('resize', handleResize);
+        window.visualViewport?.removeEventListener('scroll', handleResize);
+      };
+    }
+  }, []);
 
   // Load existing chat or show welcome message
   useEffect(() => {
@@ -143,8 +174,25 @@ const Chat = () => {
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value);
+    
+    // Auto-resize textarea based on content
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 128)}px`;
+    }
+  };
+
+  const handleInputFocus = () => {
+    // Scroll to bottom when input is focused
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 300);
+  };
+
   return (
-    <div className="fixed inset-0 flex flex-col bg-background">
+    <div className="fixed inset-0 flex flex-col bg-background" style={{ height: '100vh', height: '100dvh' }}>
       {/* Header */}
       <header className="flex-shrink-0 bg-card border-b-2 border-foreground/30 z-10">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -163,7 +211,14 @@ const Chat = () => {
       </header>
 
       {/* Messages */}
-      <main className="flex-1 overflow-y-auto overscroll-contain min-h-0">
+      <main 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto overscroll-contain min-h-0"
+        style={{ 
+          paddingBottom: keyboardHeight > 0 ? '8px' : '0px',
+          transition: 'padding-bottom 0.2s ease-out'
+        }}
+      >
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
@@ -183,12 +238,24 @@ const Chat = () => {
       </main>
 
       {/* Input Area - Fixed to bottom */}
-      <div className="flex-shrink-0 border-t border-border bg-card z-10">
+      <div 
+        className="flex-shrink-0 border-t border-border bg-card z-10"
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'none',
+          transition: 'transform 0.2s ease-out'
+        }}
+      >
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-3" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
           <Textarea
+            ref={textareaRef}
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyPress}
+            onFocus={handleInputFocus}
             placeholder="Type your message..."
             className="flex-1 min-h-[44px] max-h-32 resize-none text-base"
             rows={1}
