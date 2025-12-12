@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import ScrollListItem from "@/components/ScrollListItem";
 import ChatListItem from "@/components/ChatListItem";
-import { Button } from "@/components/ui/button";
-import { MessageCirclePlus, ClipboardList } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MessageCirclePlus, ClipboardList, Compass } from "lucide-react";
 
 // Data interfaces
 interface Question {
@@ -137,7 +137,6 @@ const mockChats: Chat[] = [
 
 const ScriptureExplorer = () => {
   const navigate = useNavigate();
-  const [activeView, setActiveView] = useState<'scrolls' | 'chats'>('scrolls');
 
   const handleScrollClick = (scrollId: string) => {
     navigate(`/scroll/${scrollId}`);
@@ -151,87 +150,86 @@ const ScriptureExplorer = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
-        <div className="max-w-2xl mx-auto px-4 py-3">
-          <h1 className="text-xl font-bold text-foreground">Scripture Explorer</h1>
+        <div className="max-w-2xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-foreground/10 flex items-center justify-center">
+              <Compass className="h-5 w-5 text-foreground" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-foreground">Scripture Explorer</h1>
+              <p className="text-xs text-muted-foreground">Your scrolls, chats & quizzes</p>
+            </div>
+          </div>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/chat')}
-            className="h-12 border-2 border-foreground/20 justify-start gap-2"
-          >
-            <MessageCirclePlus className="h-5 w-5" />
-            <span>New Chat</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => navigate('/new-quiz')}
-            className="h-12 border-2 border-foreground/20 justify-start gap-2"
-          >
-            <ClipboardList className="h-5 w-5" />
-            <span>New Quiz</span>
-          </Button>
-
-          <Button
-            variant={activeView === 'scrolls' ? 'default' : 'outline'}
-            onClick={() => setActiveView('scrolls')}
-            className="h-12 border-2 border-foreground/20"
-          >
-            All Scrolls
-          </Button>
-
-          <Button
-            variant={activeView === 'chats' ? 'default' : 'outline'}
-            onClick={() => setActiveView('chats')}
-            className="h-12 border-2 border-foreground/20"
-          >
-            All Chats
-          </Button>
-        </div>
-
-        {/* List View */}
+        {/* Quick Actions */}
         <div className="space-y-3">
-          {activeView === 'scrolls' ? (
-            <>
-              {mockScrolls.length > 0 ? (
-                mockScrolls.map((scroll) => (
-                  <ScrollListItem
-                    key={scroll.id}
-                    scroll={scroll}
-                    onClick={() => handleScrollClick(scroll.id)}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                  <p>No scrolls yet</p>
-                  <p className="text-sm mt-2">Start reading to create your first scroll</p>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              {mockChats.length > 0 ? (
-                mockChats.map((chat) => (
-                  <ChatListItem
-                    key={chat.id}
-                    chat={chat}
-                    onClick={() => handleChatClick(chat.id)}
-                  />
-                ))
-              ) : (
-                <div className="text-center py-12 text-muted-foreground">
-                  <p>No chats yet</p>
-                  <p className="text-sm mt-2">Start a conversation with Leo to ask questions</p>
-                </div>
-              )}
-            </>
-          )}
+          <Card
+            onClick={() => navigate('/chat')}
+            className="p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer"
+          >
+            <div>
+              <h3 className="font-semibold text-foreground">New Chat</h3>
+              <p className="text-sm text-muted-foreground">Start a conversation with Leo</p>
+            </div>
+            <MessageCirclePlus className="h-6 w-6 text-foreground" />
+          </Card>
+
+          <Card
+            onClick={() => navigate('/new-quiz')}
+            className="p-4 flex items-center justify-between hover:bg-accent transition-colors cursor-pointer"
+          >
+            <div>
+              <h3 className="font-semibold text-foreground">New Quiz</h3>
+              <p className="text-sm text-muted-foreground">Test your knowledge on a scroll</p>
+            </div>
+            <ClipboardList className="h-6 w-6 text-foreground" />
+          </Card>
         </div>
+
+        {/* Tabbed Content */}
+        <Tabs defaultValue="scrolls" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="scrolls">Scrolls</TabsTrigger>
+            <TabsTrigger value="chats">Chats</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="scrolls" className="mt-4 space-y-3">
+            {mockScrolls.length > 0 ? (
+              mockScrolls.map((scroll) => (
+                <ScrollListItem
+                  key={scroll.id}
+                  scroll={scroll}
+                  onClick={() => handleScrollClick(scroll.id)}
+                />
+              ))
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>No scrolls yet</p>
+                <p className="text-sm mt-2">Start reading to create your first scroll</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="chats" className="mt-4 space-y-3">
+            {mockChats.length > 0 ? (
+              mockChats.map((chat) => (
+                <ChatListItem
+                  key={chat.id}
+                  chat={chat}
+                  onClick={() => handleChatClick(chat.id)}
+                />
+              ))
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>No chats yet</p>
+                <p className="text-sm mt-2">Start a conversation with Leo to ask questions</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
 
       <Footer />
