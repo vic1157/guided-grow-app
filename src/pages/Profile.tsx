@@ -52,12 +52,8 @@ const Profile = () => {
   };
 
   const handleSkipStep = () => {
-    if (onboardingStep === 1) {
-      setOnboardingStep(2);
-    } else {
-      setShowOnboardingModal(false);
-      navigate("/home");
-    }
+    setShowOnboardingModal(false);
+    navigate("/home");
   };
   return (
     <div className="min-h-screen bg-background pb-20">

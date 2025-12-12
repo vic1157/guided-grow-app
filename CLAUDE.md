@@ -158,7 +158,113 @@ Preview implementation with "Coming Soon" overlay:
   - Encouragements and comments
 - Overlay reappears on every visit to maintain excitement
 
-### 5. Home Page (`/home`)
+### 5. Scripture Explorer (`/scripture-explorer`)
+
+Central hub for accessing scrolls, AI chat, and quiz features. Accessible via the middle "Create" button in Footer navigation.
+
+**Main Features:**
+- **4 Action Buttons**: New Chat, New Quiz, All Scrolls, All Chats
+- **Toggleable List View**: Filter between scrolls and chats
+- **Empty States**: Helpful messaging when no data exists
+- **Mock Data**: 3 sample scrolls and 2 sample chats
+
+#### AI Chat Interface (`/chat`)
+Interactive conversation with Leo AI assistant:
+- Message history display with user and Leo messages
+- Real-time text input with send button
+- Auto-scroll to latest message
+- Support for existing chats via URL parameter (`/chat?id={chatId}`)
+- Mock responses with 1-second delay
+- Enter key to send messages
+- Clean left/right aligned message bubbles
+
+#### Quiz System (`/new-quiz` and quiz taking)
+Complete quiz functionality:
+- **Quiz Selection** (`/new-quiz`): Choose from available scrolls to generate quiz
+- **Multi-Question Interface**: Progress indicator, question counter, navigation
+- **Answer Selection**: Radio button options with visual feedback
+- **Quiz Navigation**: Previous/Next buttons, disabled until answer selected
+- **Results Display**: Score calculation, per-question review with explanations
+- **Correct/Incorrect Indicators**: Visual feedback with checkmarks and X marks
+- **Retake Functionality**: Option to retake quiz after completion
+- **Auto-Start**: URL parameter support (`?startQuiz=true`)
+
+#### Scroll Detail View (`/scroll/:id`)
+Comprehensive scroll information and quiz integration:
+- **Scroll Header**: Title, scripture reference, duration, reading time
+- **Summary Section**: AI-generated chapter summary
+- **Personal Reflection**: Display user's notes and thoughts
+- **Quiz Status**: Shows previous score if quiz was taken
+- **Quiz Integration**: Seamless transition from scroll view to quiz taking
+- **Three Views**:
+  1. Scroll Information (default)
+  2. Quiz Taking (interactive questions)
+  3. Quiz Results (score and review)
+
+**Components:**
+- `ScrollListItem.tsx`: Reusable scroll card with icon, metadata, quiz status
+- `ChatListItem.tsx`: Reusable chat card with last message preview
+- `ChatMessage.tsx`: Message bubble component for Leo and user messages
+- `QuizQuestion.tsx`: Quiz question with radio options and explanations
+
+**Navigation Flow:**
+```
+Footer "Create" Button → /scripture-explorer
+    ├── New Chat → /chat (new conversation)
+    ├── New Quiz → /new-quiz → select scroll → /scroll/:id?startQuiz=true
+    ├── All Scrolls → click scroll → /scroll/:id
+    └── All Chats → click chat → /chat?id={chatId}
+```
+
+**Data Structures:**
+```typescript
+interface Scroll {
+  id: string;
+  title: string;
+  scriptureReference: string;
+  duration: string;
+  timestamp: string;
+  hasQuiz: boolean;
+  quizScore?: { correct: number; total: number };
+  summary: string;
+  questions: Question[];
+  reflection: string;
+  readingTime: string;
+}
+
+interface Quiz {
+  id: string;
+  scrollId: string;
+  title: string;
+  questions: QuizQuestion[];
+}
+
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+  verseReference?: string;
+}
+
+interface Chat {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ChatMessage {
+  id: string;
+  sender: 'user' | 'leo';
+  content: string;
+  timestamp: string;
+}
+```
+
+### 6. Home Page (`/home`)
 
 Features OnboardingProgress component that tracks:
 1. Complete Your Profile ✓ (navigates to `/profile?onboarding=true`)
@@ -188,17 +294,29 @@ src/
 │   ├── DemoScroll.tsx       # Hands-on demo scroll experience
 │   ├── Community.tsx        # Community preview (coming soon)
 │   ├── Read.tsx             # Bible reading engine + ActivityPanel
+│   ├── ScriptureExplorer.tsx # Scripture Explorer hub (NEW)
+│   ├── Chat.tsx             # AI chat interface with Leo (NEW)
+│   ├── NewQuiz.tsx          # Quiz selection page (NEW)
+│   ├── ScrollDetail.tsx     # Scroll detail + quiz taking (NEW)
 │   ├── Index.tsx            # Home page
 │   ├── Profile.tsx          # User profile + onboarding
 │   └── NotFound.tsx         # 404 page
 ├── components/
-│   ├── Footer.tsx           # App footer
+│   ├── Footer.tsx           # App footer (updated Create button path)
 │   ├── OnboardingProgress.tsx  # Task tracker widget
 │   ├── ActivityPanel.tsx    # Draggable AI features panel (Read page)
+│   ├── ScrollListItem.tsx   # Scroll list card component (NEW)
+│   ├── ChatListItem.tsx     # Chat list card component (NEW)
+│   ├── ChatMessage.tsx      # Chat message bubble (NEW)
+│   ├── QuizQuestion.tsx     # Quiz question component (NEW)
 │   └── ui/                  # Shadcn UI components
+├── hooks/
+│   ├── use-mobile.tsx       # Mobile detection hook
+│   ├── use-toast.ts         # Toast notification hook
+│   └── use-theme.tsx        # Theme provider and hook (NEW)
 ├── lib/
 │   └── utils.ts             # Utility functions (cn helper)
-└── App.tsx                  # Main routing configuration
+└── App.tsx                  # Main routing configuration (wrapped with ThemeProvider)
 ```
 
 ## Key Implementation Details
@@ -261,16 +379,77 @@ interface Chapter {
 ✅ Active and Inactive reading modes with panel states
 ✅ AI feature access buttons (Start Scroll, Chapter Context, Ask Leo/AI, Add Question)
 ✅ Reading timer for active sessions
+✅ Light/Dark mode theme system with toggle
+✅ Mobile-optimized chat interface with keyboard handling
+✅ Scripture Explorer redesign with tabs and action cards
+✅ Quiz interface redesign with custom scripture range selection
+✅ Leo AI introduction in chat welcome message
 
-## Changes on `olu/ryb-57-ryb-scroll-walkthrough` Branch
+## Changes on `olu/ryb-52-implement-scripture-explorer-in-prototype` Branch
+
+### Theme System (NEW)
+- **ThemeProvider**: Created `src/hooks/use-theme.tsx` with React context for theme management
+- **Theme Persistence**: Saves to localStorage, respects system preference
+- **Dark Mode Toggle**: Added Sun/Moon icon button in Index.tsx header
+- **Dark Mode CSS Variables**: Middle-ground darkness in `index.css` (8% background lightness)
+
+### Mobile Optimizations (NEW)
+- **Viewport Meta Tag**: Updated `index.html` with `maximum-scale=1.0, user-scalable=no` to prevent zoom on input focus
+- **Chat.tsx Mobile Layout**:
+  - Changed from `h-screen` to `fixed inset-0` for true full-screen app shell
+  - Added `min-h-0` for proper flex overflow
+  - Safe-area padding with `max(12px, env(safe-area-inset-bottom))`
+  - Input anchored to bottom regardless of keyboard state
+- **Global CSS (`index.css`)**:
+  - Set `html, body` to `height: 100%` with `overflow: hidden`
+  - Added `-webkit-text-size-adjust: 100%` and `overscroll-behavior: none`
+  - 16px minimum font size on inputs to prevent iOS auto-zoom
+  - `@supports` rule for `100dvh` on compatible browsers
+
+### ScriptureExplorer.tsx Redesign
+- **Action Cards**: Replaced 4-button grid with two Card-based action buttons ("New Chat", "New Quiz")
+- **Tabbed Content**: Added Tabs component for "Scrolls" and "Chats" view toggling
+- **Enhanced Header**: Added Compass icon with title/subtitle layout
+
+### DemoScroll.tsx Polish
+- **Initial Summary State**: Changed `expandedSummary` initial state from `true` to `false`
+- **Show More Button**: Updated to use `variant="outline"` with `bg-secondary/80` and yellow accent
+- **Enhanced Summary Section**: Expandable text, subtler button, improved AI feedback with thumbs up/down
+- **Personal Reflection**: Quote-style border, character count display
+- **Micro-interactions**: Smooth transitions on visibility options and question accordions
+
+### ScrollDetail.tsx Updates
+- **React Hooks Fix**: Moved `useState` hooks (`expandedSummary`, `expandedQuestions`) from conditional render block to top-level to fix Hooks violation
+- **Design Alignment**: Updated scroll view to match DemoScroll.tsx patterns
+- **Expandable Sections**: Summary and questions now use accordion-style expansion
+
+### NewQuiz.tsx Redesign
+- **Two-Section Layout**: "Define Quiz Scripture Range" form and "From Previous Scroll" scroll selection
+- **Custom Scripture Form**: Book, chapter, verse selects with question count and type checkboxes
+- **Visual Separation**: Card components with "OR" divider between sections
+- **Pagination**: Added for scroll list navigation
+- **Responsive Spacing**: Duration below scripture reference on mobile, increased gaps between scroll cards
+
+### QuizQuestion.tsx Redesign
+- **Custom Options**: Replaced RadioGroup with button-based options
+- **Letter Prefixes**: A, B, C, D in circular badges
+- **Selection States**: Distinct visual feedback (background, border, text color)
+- **Animations**: Hover scale and smooth transitions
+
+### Navigation Fixes
+- **Skip Buttons**: All "Skip for Now" buttons in onboarding flows now navigate directly to `/home`
+- **ScrollWalkthrough.tsx**: Skip button navigates to `/home` after `handleComplete()`
+
+### Chat.tsx Updates
+- **Leo Introduction**: Welcome message now introduces "Leo" by name
+- **Mobile-First Layout**: Fixed positioning for keyboard handling
+
+### Community.tsx
+- **Button Text**: Changed "Stay tuned for updates" to "Preview community feature" (then user edited to "Tap Button to Preview 👀")
 
 ### ScrollWalkthrough.tsx
 - **Show More Button Contrast**: Updated the "Show More" button in Step 3 to use `variant="outline"` with added `bg-background/50`, `border-foreground/20`, and hover effects for better visibility.
 - **Collapsible Personal Reflection**: Added `expandedReflection` state to Step 6. The reflection now starts collapsed (showing ~3 lines) with a "Tap to read full reflection" overlay. Clicking expands to show full text.
-
-### DemoScroll.tsx
-- **Initial Summary State**: Changed `expandedSummary` initial state from `true` to `false`, so the summary starts collapsed and shows "Show More" by default.
-- **Show More Button Contrast**: Updated the button to use `variant="outline"` with `bg-secondary/80` and `border-secondary-foreground/20` for a darker, more contrasted appearance.
 
 ## Known Limitations / Future Work
 
@@ -354,16 +533,28 @@ Bottom sheet panel with interactive gestures:
 - **Visual Feedback**: Borders, separators, and position changes for user clarity
 - **Z-Index Hierarchy**: Panel (z-40) sits below footer (z-50) to maintain navigation accessibility
 
+### Theme System Pattern
+Light/dark mode implementation:
+- **ThemeProvider**: React context wrapping entire app in `App.tsx`
+- **useTheme Hook**: Returns `{ theme, setTheme, toggleTheme }` for any component
+- **Storage**: Persists to localStorage under `theme` key
+- **System Preference**: Falls back to `prefers-color-scheme` media query
+- **CSS Variables**: HSL-based color tokens in `:root` and `.dark` classes
+- **Toggle**: Sun/Moon icon button in header (Index.tsx)
+
+### Mobile Chat Pattern
+Full-screen chat interface optimized for mobile keyboards:
+- **Fixed Layout**: `fixed inset-0` creates app shell that doesn't shift with browser chrome
+- **Flex Container**: Header, scrollable messages, and input in column layout
+- **Safe Area**: `env(safe-area-inset-bottom)` for notched devices
+- **Input Sizing**: 16px minimum font size prevents iOS auto-zoom
+- **Overscroll**: `overscroll-contain` prevents scroll bleeding
+
 ## Git Status
 
-- Current branch: `olu/ryb-57-ryb-scroll-walkthrough`
+- Current branch: `olu/ryb-52-implement-scripture-explorer-in-prototype`
 - Main branch: `main`
-- Working directory: Modified (bun.lockb, package.json)
-
-## Recent Commits (olu/ryb-57-ryb-scroll-walkthrough)
-- feat: implement collapsible reflection UI, update button styles, and add new dependencies
-- feat: expand scroll walkthrough to 8 steps with mock activity panel and add question type explanation popover to demo scroll
-- feat: add scroll walkthrough onboarding and free pricing tier
+- Working directory: Modified files from recent UI/UX improvements
 
 ## Notes for Future Development
 
@@ -394,4 +585,4 @@ Bottom sheet panel with interactive gestures:
 
 ---
 
-Last Updated: 2025-12-08
+Last Updated: 2025-12-11
