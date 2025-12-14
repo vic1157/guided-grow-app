@@ -130,3 +130,11 @@ All colors MUST be HSL.
     }
   }
 }
+
+@layer utilities {
+  /* Dynamic viewport height with fallback for mobile keyboard handling */
+  .h-dvh {
+    height: 100vh;
+    height: 100dvh;
+  }
+}
