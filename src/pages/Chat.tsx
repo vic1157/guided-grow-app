@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ChatMessage from "@/components/ChatMessage";
 import { Button } from "@/components/ui/button";
@@ -84,8 +84,12 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [footerHeight, setFooterHeight] = useState(0);
   const keyboardInset = 'calc(env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))';
-  const inputBarReserve = 'calc(120px + env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))';
+  const inputBarReserve = `calc(${footerHeight || 96}px + env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))`;
 
   // Lock page scroll so the window does not move when the keyboard opens
   useEffect(() => {
@@ -96,6 +100,28 @@ const Chat = () => {
     return () => {
       document.documentElement.style.overflow = prevDocOverflow;
       document.body.style.overflow = prevBodyOverflow;
+    };
+  }, []);
+
+  // Track header/footer height so main area offsets correctly on mobile
+  useLayoutEffect(() => {
+    const updateHeights = () => {
+      setHeaderHeight(headerRef.current?.offsetHeight ?? 0);
+      setFooterHeight(footerRef.current?.offsetHeight ?? 0);
+    };
+
+    updateHeights();
+
+    const resizeObserver = new ResizeObserver(updateHeights);
+    if (headerRef.current) resizeObserver.observe(headerRef.current);
+    if (footerRef.current) resizeObserver.observe(footerRef.current);
+
+    // Fallback for viewport changes when keyboard opens
+    window.visualViewport?.addEventListener('resize', updateHeights);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.visualViewport?.removeEventListener('resize', updateHeights);
     };
   }, []);
 
@@ -174,9 +200,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-dvh bg-background overflow-hidden">
-      {/* Header - sticky at top */}
-      <header className="sticky top-0 bg-card border-b-2 border-foreground/30 z-20">
+    <div className="relative h-dvh bg-background overflow-hidden">
+      {/* Header - fixed at top */}
+      <header ref={headerRef} className="fixed top-0 left-0 right-0 bg-card border-b-2 border-foreground/30 z-30">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
@@ -193,7 +219,13 @@ const Chat = () => {
       </header>
 
       {/* Messages - Flexible scroll area */}
-      <main className="flex-1 overflow-y-auto overscroll-none">
+      <main
+        className="absolute left-0 right-0 overflow-y-auto overscroll-none"
+        style={{
+          top: headerHeight,
+          bottom: `calc(${footerHeight}px + env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))`
+        }}
+      >
         <div
           className="max-w-2xl mx-auto w-full px-4 py-6 space-y-4"
           style={{ paddingBottom: inputBarReserve }}
@@ -215,9 +247,10 @@ const Chat = () => {
         </div>
       </main>
 
-      {/* Input Area - sticky at bottom with keyboard inset */}
+      {/* Input Area - fixed at bottom with keyboard inset */}
       <div
-        className="sticky bottom-0 border-t border-border bg-card z-20"
+        ref={footerRef}
+        className="fixed left-0 right-0 bottom-0 border-t border-border bg-card z-30"
         style={{ paddingBottom: keyboardInset }}
       >
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-3">
