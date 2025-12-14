@@ -167,9 +167,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="h-dvh flex flex-col bg-background overflow-hidden">
-      {/* Header */}
-      <header className="flex-shrink-0 bg-card border-b-2 border-foreground/30">
+    <div className="fixed inset-0 bg-background">
+      {/* Header - Fixed at top */}
+      <header className="fixed top-0 left-0 right-0 bg-card border-b-2 border-foreground/30 z-20">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
@@ -185,8 +185,15 @@ const Chat = () => {
         </div>
       </header>
 
-      {/* Messages */}
-      <main className="flex-1 overflow-y-auto min-h-0 overscroll-none">
+      {/* Messages - Scrollable area between header and input */}
+      <main 
+        className="absolute inset-0 overflow-y-auto overscroll-none"
+        style={{ 
+          top: '60px', // Header height
+          bottom: '76px', // Input area height + safe area
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)'
+        }}
+      >
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
@@ -205,8 +212,11 @@ const Chat = () => {
         </div>
       </main>
 
-      {/* Input Area */}
-      <div className="flex-shrink-0 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
+      {/* Input Area - Fixed at bottom */}
+      <div 
+        className="fixed left-0 right-0 bottom-0 border-t border-border bg-card z-20"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-3">
           <Textarea
             ref={textareaRef}
