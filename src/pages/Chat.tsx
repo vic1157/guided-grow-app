@@ -84,6 +84,8 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const keyboardInset = 'calc(env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))';
+  const inputBarReserve = 'calc(120px + env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))';
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -159,17 +161,10 @@ const Chat = () => {
     }
   };
 
-  const handleInputFocus = () => {
-    // Scroll to bottom when input is focused (for older browsers)
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 300);
-  };
-
   return (
-    <div className="fixed inset-0 bg-background">
-      {/* Header - Fixed at top */}
-      <header className="fixed top-0 left-0 right-0 bg-card border-b-2 border-foreground/30 z-20">
+    <div className="flex flex-col h-dvh bg-background overflow-hidden">
+      {/* Header - sticky at top */}
+      <header className="sticky top-0 bg-card border-b-2 border-foreground/30 z-20">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
@@ -185,16 +180,12 @@ const Chat = () => {
         </div>
       </header>
 
-      {/* Messages - Scrollable area between header and input */}
-      <main 
-        className="absolute inset-0 overflow-y-auto overscroll-none"
-        style={{ 
-          top: '60px', // Header height
-          bottom: '76px', // Input area height + safe area
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)'
-        }}
-      >
-        <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+      {/* Messages - Flexible scroll area */}
+      <main className="flex-1 overflow-y-auto overscroll-none">
+        <div
+          className="max-w-2xl mx-auto w-full px-4 py-6 space-y-4"
+          style={{ paddingBottom: inputBarReserve }}
+        >
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
@@ -208,14 +199,14 @@ const Chat = () => {
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} style={{ scrollMarginBottom: inputBarReserve }} />
         </div>
       </main>
 
-      {/* Input Area - Fixed at bottom */}
-      <div 
-        className="fixed left-0 right-0 bottom-0 border-t border-border bg-card z-20"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      {/* Input Area - sticky at bottom with keyboard inset */}
+      <div
+        className="sticky bottom-0 border-t border-border bg-card z-20"
+        style={{ paddingBottom: keyboardInset }}
       >
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-3">
           <Textarea
@@ -223,7 +214,6 @@ const Chat = () => {
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            onFocus={handleInputFocus}
             placeholder="Type your message..."
             className="flex-1 min-h-[44px] max-h-32 resize-none text-base"
             rows={1}
