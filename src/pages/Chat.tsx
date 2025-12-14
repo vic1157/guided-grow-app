@@ -87,6 +87,18 @@ const Chat = () => {
   const keyboardInset = 'calc(env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))';
   const inputBarReserve = 'calc(120px + env(safe-area-inset-bottom, 0px) + env(keyboard-inset-height, 0px))';
 
+  // Lock page scroll so the window does not move when the keyboard opens
+  useEffect(() => {
+    const prevDocOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.style.overflow = prevDocOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, []);
+
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
