@@ -115,7 +115,7 @@ All colors MUST be HSL.
 
   #root {
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
   }
 
   /* Prevent iOS zoom on input focus */
