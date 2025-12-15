@@ -3,9 +3,12 @@ import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, HelpCircle, Flame, BookOpen, Heart, Compass } from "lucide-react";
+import { Bell, Sun, Moon, Flame, BookOpen, Heart, Compass } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 const Index = () => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <div className="min-h-screen bg-muted pb-20">
       {/* Header */}
@@ -19,8 +22,8 @@ const Index = () => {
             <span className="font-semibold text-foreground">John D.</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <HelpCircle className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-9 w-9" onClick={toggleTheme}>
+              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Button>
             <Button variant="ghost" size="icon" className="h-9 w-9">
               <Bell className="h-5 w-5" />
