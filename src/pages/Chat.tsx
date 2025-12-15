@@ -102,7 +102,7 @@ const Chat = () => {
       setMessages([{
         id: 'welcome',
         sender: 'leo',
-        content: "Hi, I'm Leo, your AI Bible companion! I'm here to help you understand Scripture better and grow in your faith. What would you like to explore today?",
+        content: "Hello! I'm here to help you understand the Bible better. What would you like to know or understand?",
         timestamp: 'now'
       }]);
     }
@@ -144,9 +144,9 @@ const Chat = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-background">
+    <div className="flex flex-col h-screen bg-background">
       {/* Header */}
-      <header className="flex-shrink-0 bg-card border-b-2 border-foreground/30 z-10">
+      <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
@@ -163,7 +163,7 @@ const Chat = () => {
       </header>
 
       {/* Messages */}
-      <main className="flex-1 overflow-y-auto overscroll-contain min-h-0">
+      <main className="flex-1 overflow-y-auto">
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
@@ -182,22 +182,22 @@ const Chat = () => {
         </div>
       </main>
 
-      {/* Input Area - Fixed to bottom */}
-      <div className="flex-shrink-0 border-t border-border bg-card z-10">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-3" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+      {/* Input Area */}
+      <div className="border-t border-border bg-card">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-3">
           <Textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type your message..."
-            className="flex-1 min-h-[44px] max-h-32 resize-none text-base"
+            className="flex-1 min-h-[44px] max-h-32 resize-none"
             rows={1}
           />
           <Button
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || isLoading}
             size="icon"
-            className="h-11 w-11 rounded-full bg-foreground text-background hover:bg-foreground/90 flex-shrink-0"
+            className="h-11 w-11 rounded-full bg-foreground text-background hover:bg-foreground/90"
           >
             <Send className="h-5 w-5" />
           </Button>

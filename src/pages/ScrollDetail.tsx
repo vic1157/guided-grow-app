@@ -5,25 +5,12 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import QuizQuestion from "@/components/QuizQuestion";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   ChevronLeft,
   Clock,
   ChevronRight,
   Award,
   CheckCircle2,
   XCircle,
-  Lightbulb,
-  MessageSquare,
-  ThumbsUp,
-  ThumbsDown,
-  HelpCircle,
-  Lock,
-  Users,
-  Globe,
 } from "lucide-react";
 
 // Interfaces
@@ -206,14 +193,6 @@ const ScrollDetail = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<(number | null)[]>([]);
   const [showResults, setShowResults] = useState(false);
-  const [expandedSummary, setExpandedSummary] = useState(false);
-  const [expandedQuestions, setExpandedQuestions] = useState<{
-    understanding: boolean;
-    discussion: boolean;
-  }>({
-    understanding: false,
-    discussion: false,
-  });
 
   // Load scroll and quiz data
   useEffect(() => {
@@ -389,24 +368,13 @@ const ScrollDetail = () => {
     const currentQuestion = quiz.questions[currentQuestionIndex];
     const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
     const canProceed = userAnswers[currentQuestionIndex] !== null;
-    const progress = ((currentQuestionIndex + 1) / quiz.questions.length) * 100;
 
     return (
       <div className="min-h-screen bg-background pb-20">
         <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
-          <div className="max-w-2xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-foreground text-background flex items-center justify-center font-bold text-lg">
-                  {currentQuestionIndex + 1}
-                </div>
-                <div>
-                  <h1 className="text-lg font-semibold text-foreground">{quiz.title}</h1>
-                  <p className="text-sm text-muted-foreground">
-                    Question {currentQuestionIndex + 1} of {quiz.questions.length}
-                  </p>
-                </div>
-              </div>
+          <div className="max-w-2xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-lg font-semibold text-foreground">{quiz.title}</h1>
               <Button
                 variant="ghost"
                 size="sm"
@@ -415,10 +383,15 @@ const ScrollDetail = () => {
                 Cancel
               </Button>
             </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <p className="text-sm text-muted-foreground">
+              Question {currentQuestionIndex + 1} of {quiz.questions.length}
+            </p>
+            <div className="h-2 bg-muted rounded-full mt-2 overflow-hidden">
               <div
-                className="h-full bg-foreground rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
+                className="h-full bg-foreground transition-all"
+                style={{
+                  width: `${((currentQuestionIndex + 1) / quiz.questions.length) * 100}%`
+                }}
               />
             </div>
           </div>
@@ -432,21 +405,20 @@ const ScrollDetail = () => {
             showCorrect={false}
           />
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentQuestionIndex === 0}
-              className="flex-1 h-12 rounded-xl gap-2 transition-all duration-200"
+              className="flex-1"
             >
-              <ChevronLeft className="h-4 w-4" />
               Previous
             </Button>
             {isLastQuestion ? (
               <Button
                 onClick={handleSubmit}
                 disabled={!canProceed}
-                className="flex-1 h-12 rounded-xl bg-foreground text-background hover:bg-foreground/90 transition-all duration-200"
+                className="flex-1 bg-foreground text-background hover:bg-foreground/90"
               >
                 Submit Quiz
               </Button>
@@ -454,10 +426,10 @@ const ScrollDetail = () => {
               <Button
                 onClick={handleNext}
                 disabled={!canProceed}
-                className="flex-1 h-12 rounded-xl gap-2 bg-foreground text-background hover:bg-foreground/90 transition-all duration-200"
+                className="flex-1 bg-foreground text-background hover:bg-foreground/90"
               >
                 Next
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             )}
           </div>
@@ -467,15 +439,10 @@ const ScrollDetail = () => {
   }
 
   // Scroll View
-  // Filter questions by type
-  const understandingQuestions = scroll.questions.filter(q => q.type === 'understanding');
-  const discussionQuestions = scroll.questions.filter(q => q.type === 'discussion');
-
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
       <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
             size="sm"
@@ -485,180 +452,26 @@ const ScrollDetail = () => {
             <ChevronLeft className="h-5 w-5" />
             <span>Back</span>
           </Button>
-          <h1 className="text-lg font-semibold text-foreground">Scroll Overview</h1>
-          <div className="w-16" /> {/* Spacer for centering */}
+          <h1 className="flex-1 text-lg font-semibold text-foreground truncate">{scroll.title}</h1>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Scroll Header */}
         <Card className="p-6 space-y-3 border-2 border-foreground/20">
-          <h2 className="text-2xl font-bold text-foreground leading-tight">{scroll.title}</h2>
+          <h2 className="text-2xl font-bold text-foreground">{scroll.title}</h2>
           <p className="text-muted-foreground">{scroll.scriptureReference}</p>
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span className="text-sm">{scroll.readingTime} reading time</span>
-            </div>
-            <span>•</span>
-            <span className="text-sm">{scroll.timestamp}</span>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Clock className="h-4 w-4" />
+            <span className="text-sm">{scroll.duration} • {scroll.readingTime} reading time</span>
           </div>
         </Card>
 
-        {/* Summary Section */}
+        {/* Summary */}
         <div className="space-y-3">
           <h3 className="text-xl font-semibold text-foreground">Summary</h3>
-          <Card className="overflow-hidden border-2 border-foreground/20">
-            <div className="p-4 space-y-4">
-              <div
-                className={`text-sm text-muted-foreground leading-relaxed transition-all duration-300 ease-in-out ${
-                  expandedSummary ? "" : "line-clamp-3"
-                }`}
-              >
-                <p>{scroll.summary}</p>
-              </div>
-
-              {scroll.summary.length > 150 && (
-                <Button
-                  onClick={() => setExpandedSummary(!expandedSummary)}
-                  variant="outline"
-                  className="w-full text-foreground bg-secondary/80 border-secondary-foreground/20 hover:bg-secondary hover:border-secondary-foreground/40"
-                >
-                  {expandedSummary ? "Show Less" : "Show More"}
-                </Button>
-              )}
-
-              <Separator />
-
-              <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-                <span className="italic">AI Generated Response</span>
-                <div className="flex items-center gap-1">
-                  <span>Accurate?</span>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-accent rounded-full">
-                    <ThumbsUp className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-accent rounded-full">
-                    <ThumbsDown className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Questions Section */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-semibold text-foreground">Questions</h3>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-5 w-5 rounded-full p-0 hover:bg-muted">
-                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                    <span className="sr-only">Question types info</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-4" align="start" collisionPadding={16}>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm">
-                        <span className="font-semibold text-foreground">Understanding</span>{" "}
-                        <span className="text-muted-foreground">questions help establish what the text says and means at a basic level.</span>
-                      </p>
-                    </div>
-                    <Separator />
-                    <div>
-                      <p className="text-sm">
-                        <span className="font-semibold text-foreground">Discussion</span>{" "}
-                        <span className="text-muted-foreground">questions explore deeper meanings, implications and connections within a particular scripture.</span>
-                      </p>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-
-          {/* Understanding Questions */}
-          <Card className="border-2 border-foreground/20 overflow-hidden">
-            <button
-              onClick={() =>
-                setExpandedQuestions((prev) => ({ ...prev, understanding: !prev.understanding }))
-              }
-              className="w-full p-4 flex items-center justify-between hover:bg-accent/50 transition-all duration-200"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-foreground/10 flex items-center justify-center">
-                  <Lightbulb className="h-4 w-4 text-foreground" />
-                </div>
-                <span className="font-medium text-foreground">Understanding ({understandingQuestions.length})</span>
-              </div>
-              <ChevronRight
-                className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
-                  expandedQuestions.understanding ? "rotate-90" : ""
-                }`}
-              />
-            </button>
-
-            {expandedQuestions.understanding && (
-              <div className="border-t border-border animate-in slide-in-from-top-2 duration-200">
-                <div className="p-4 bg-accent/30 space-y-3">
-                  {understandingQuestions.length > 0 ? (
-                    understandingQuestions.map((question) => (
-                      <Card key={question.id} className="p-4 border border-border space-y-2 bg-background">
-                        <p className="text-sm text-foreground">{question.text}</p>
-                        {question.verseReference && (
-                          <p className="text-xs text-muted-foreground">{question.verseReference}</p>
-                        )}
-                      </Card>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground text-center py-2">No understanding questions yet.</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </Card>
-
-          {/* Discussion Questions */}
-          <Card className="border-2 border-foreground/20 overflow-hidden">
-            <button
-              onClick={() =>
-                setExpandedQuestions((prev) => ({ ...prev, discussion: !prev.discussion }))
-              }
-              className="w-full p-4 flex items-center justify-between hover:bg-accent/50 transition-all duration-200"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-foreground/10 flex items-center justify-center">
-                  <MessageSquare className="h-4 w-4 text-foreground" />
-                </div>
-                <span className="font-medium text-foreground">Discussion ({discussionQuestions.length})</span>
-              </div>
-              <ChevronRight
-                className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
-                  expandedQuestions.discussion ? "rotate-90" : ""
-                }`}
-              />
-            </button>
-
-            {expandedQuestions.discussion && (
-              <div className="border-t border-border p-4 bg-accent/30 animate-in slide-in-from-top-2 duration-200">
-                {discussionQuestions.length > 0 ? (
-                  <div className="space-y-3">
-                    {discussionQuestions.map((question) => (
-                      <Card key={question.id} className="p-4 border border-border space-y-2 bg-background">
-                        <p className="text-sm text-foreground">{question.text}</p>
-                        {question.verseReference && (
-                          <p className="text-xs text-muted-foreground">{question.verseReference}</p>
-                        )}
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground text-center">No discussion questions yet.</p>
-                )}
-              </div>
-            )}
+          <Card className="p-4 border-2 border-foreground/20">
+            <p className="text-sm text-muted-foreground leading-relaxed">{scroll.summary}</p>
           </Card>
         </div>
 
@@ -666,35 +479,18 @@ const ScrollDetail = () => {
         {scroll.reflection && (
           <div className="space-y-3">
             <h3 className="text-xl font-semibold text-foreground">Personal Reflection</h3>
-            <Card className="p-4 space-y-3 border-2 border-foreground/20">
-              <div className="border-l-4 border-foreground/20 pl-4">
-                <p className="text-sm text-foreground leading-relaxed italic">{scroll.reflection}</p>
-              </div>
-              <p className="text-xs text-muted-foreground text-right">
-                {scroll.reflection.length} characters
-              </p>
+            <Card className="p-4 border-2 border-foreground/20">
+              <p className="text-sm text-foreground leading-relaxed">{scroll.reflection}</p>
             </Card>
           </div>
         )}
 
-        {/* Visibility Indicator */}
-        <div className="space-y-3">
-          <h3 className="text-xl font-semibold text-foreground">Visibility</h3>
-          <Card className="p-4 border-2 border-foreground/20">
-            <div className="flex items-center gap-3">
-              <Globe className="h-5 w-5 text-foreground" />
-              <div>
-                <p className="font-medium text-foreground">Public</p>
-                <p className="text-xs text-muted-foreground">Anyone can see this scroll</p>
-              </div>
-            </div>
-          </Card>
-        </div>
+        <Separator />
 
         {/* Quiz Section */}
-        {scroll.hasQuiz && quiz && (
-          <div className="space-y-4 pt-4">
-            <h3 className="text-xl font-semibold text-foreground">Quiz</h3>
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-foreground">Quiz</h3>
+          {scroll.hasQuiz && quiz ? (
             <div className="space-y-3">
               {scroll.quizScore && (
                 <Card className="p-4 bg-accent border-2 border-foreground/20">
@@ -711,25 +507,20 @@ const ScrollDetail = () => {
               )}
               <Button
                 onClick={handleStartQuiz}
-                className="w-full h-14 bg-foreground text-background hover:bg-foreground/90 rounded-xl text-lg font-semibold"
+                className="w-full h-14 bg-foreground text-background hover:bg-foreground/90 text-lg font-semibold"
               >
                 {scroll.quizScore ? 'Retake Quiz' : 'Take Quiz'}
               </Button>
             </div>
-          </div>
-        )}
-
-        {!scroll.hasQuiz && (
-          <div className="space-y-4 pt-4">
-            <h3 className="text-xl font-semibold text-foreground">Quiz</h3>
+          ) : (
             <Card className="p-6 text-center border-2 border-foreground/20">
               <p className="text-muted-foreground">No quiz available for this scroll yet</p>
               <p className="text-sm text-muted-foreground mt-2">
                 Quizzes will be generated automatically in the future
               </p>
             </Card>
-          </div>
-        )}
+          )}
+        </div>
       </main>
     </div>
   );

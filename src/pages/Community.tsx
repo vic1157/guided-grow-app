@@ -77,7 +77,7 @@ const Community = () => {
                 className="text-xs px-6 py-2"
                 onClick={() => setShowOverlay(false)}
               >
-                Tap Button to Preview 👀
+                Stay tuned for updates
               </Button>
             </div>
           </Card>

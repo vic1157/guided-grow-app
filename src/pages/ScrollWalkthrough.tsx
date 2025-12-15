@@ -56,7 +56,6 @@ const ScrollWalkthrough = () => {
 
   const handleSkip = () => {
     handleComplete();
-    navigate("/home");
   };
 
   const handleComplete = () => {

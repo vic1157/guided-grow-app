@@ -81,15 +81,11 @@ const DemoScroll = () => {
 
         {/* Scroll Header */}
         <Card className="p-6 space-y-3 border-2 border-foreground/20">
-          <h2 className="text-2xl font-bold text-foreground leading-tight">Jesus Rises, Sends Disciples</h2>
+          <h2 className="text-2xl font-bold text-foreground">Jesus Rises, Sends Disciples</h2>
           <p className="text-muted-foreground">Matthew 5:1 - Matthew 5:48</p>
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span className="text-sm">7-8 mins</span>
-            </div>
-            <span>•</span>
-            <span className="text-sm">48 verses</span>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Clock className="h-4 w-4" />
+            <span className="text-sm">7-8 mins • 48 verses</span>
           </div>
         </Card>
 
@@ -97,11 +93,10 @@ const DemoScroll = () => {
         <div className="space-y-3">
           <h3 className="text-xl font-semibold text-foreground">Summary</h3>
           <Card className="overflow-hidden border-2 border-foreground/20">
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-3">
               <div
-                className={`space-y-3 text-sm text-muted-foreground transition-all duration-300 ease-in-out ${
-                  expandedSummary ? "max-h-96" : "max-h-24 overflow-hidden"
-                }`}
+                className={`space-y-3 text-sm text-muted-foreground transition-all ${expandedSummary ? "max-h-96" : "max-h-24 overflow-hidden"
+                  }`}
               >
                 <p>
                   Contains the beginning of Jesus' Sermon on the Mount, starting with the Beatitudes
@@ -129,15 +124,15 @@ const DemoScroll = () => {
 
               <Separator />
 
-              <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-                <span className="italic">AI Generated Response</span>
-                <div className="flex items-center gap-1">
-                  <span>Accurate?</span>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-accent rounded-full">
-                    <ThumbsUp className="h-3.5 w-3.5" />
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>AI Generated Response</span>
+                <div className="flex items-center gap-2">
+                  <span>Accurate Summary?</span>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-accent">
+                    <ThumbsUp className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-accent rounded-full">
-                    <ThumbsDown className="h-3.5 w-3.5" />
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-accent">
+                    <ThumbsDown className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -189,25 +184,22 @@ const DemoScroll = () => {
               onClick={() =>
                 setExpandedQuestions((prev) => ({ ...prev, understanding: !prev.understanding }))
               }
-              className="w-full p-4 flex items-center justify-between hover:bg-accent/50 transition-all duration-200"
+              className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-foreground/10 flex items-center justify-center">
-                  <Lightbulb className="h-4 w-4 text-foreground" />
-                </div>
+                <Lightbulb className="h-5 w-5 text-foreground" />
                 <span className="font-medium text-foreground">Understanding (1)</span>
               </div>
               <ChevronRight
-                className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
-                  expandedQuestions.understanding ? "rotate-90" : ""
-                }`}
+                className={`h-5 w-5 text-muted-foreground transition-transform ${expandedQuestions.understanding ? "rotate-90" : ""
+                  }`}
               />
             </button>
 
             {expandedQuestions.understanding && (
-              <div className="border-t border-border animate-in slide-in-from-top-2 duration-200">
-                <div className="p-4 bg-accent/30 space-y-3">
-                  <Card className="p-4 border border-border space-y-2 bg-background">
+              <div className="border-t border-border">
+                <div className="p-4 bg-background/50 space-y-3">
+                  <Card className="p-4 border border-border space-y-2">
                     <p className="text-sm text-foreground">
                       What did Jesus mean when he said he came to "fulfill the law" rather than
                       abolish it, and how does this relate to his subsequent teachings where he seems
@@ -234,23 +226,20 @@ const DemoScroll = () => {
               onClick={() =>
                 setExpandedQuestions((prev) => ({ ...prev, discussion: !prev.discussion }))
               }
-              className="w-full p-4 flex items-center justify-between hover:bg-accent/50 transition-all duration-200"
+              className="w-full p-4 flex items-center justify-between hover:bg-accent transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full bg-foreground/10 flex items-center justify-center">
-                  <MessageSquare className="h-4 w-4 text-foreground" />
-                </div>
+                <MessageSquare className="h-5 w-5 text-foreground" />
                 <span className="font-medium text-foreground">Discussion (0)</span>
               </div>
               <ChevronRight
-                className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
-                  expandedQuestions.discussion ? "rotate-90" : ""
-                }`}
+                className={`h-5 w-5 text-muted-foreground transition-transform ${expandedQuestions.discussion ? "rotate-90" : ""
+                  }`}
               />
             </button>
 
             {expandedQuestions.discussion && (
-              <div className="border-t border-border p-4 bg-accent/30 text-center animate-in slide-in-from-top-2 duration-200">
+              <div className="border-t border-border p-4 bg-background/50 text-center">
                 <p className="text-sm text-muted-foreground">No discussion questions yet.</p>
               </div>
             )}
@@ -260,18 +249,13 @@ const DemoScroll = () => {
         {/* Personal Reflection */}
         <div className="space-y-3">
           <h3 className="text-xl font-semibold text-foreground">Personal Reflection</h3>
-          <Card className="p-4 space-y-3 border-2 border-foreground/20">
-            <div className="border-l-4 border-foreground/20 pl-4">
-              <Textarea
-                value={reflection}
-                onChange={(e) => setReflection(e.target.value)}
-                placeholder="Share your personal reflections..."
-                className="min-h-32 resize-none border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
-            </div>
-            <p className="text-xs text-muted-foreground text-right">
-              {reflection.length} characters
-            </p>
+          <Card className="p-4 space-y-4 border-2 border-foreground/20">
+            <Textarea
+              value={reflection}
+              onChange={(e) => setReflection(e.target.value)}
+              placeholder="Share your personal reflections..."
+              className="min-h-32 resize-none"
+            />
           </Card>
         </div>
 
@@ -281,11 +265,10 @@ const DemoScroll = () => {
           <div className="space-y-2">
             <button
               onClick={() => setSelectedVisibility("private")}
-              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all duration-200 ${
-                selectedVisibility === "private"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground hover:bg-accent/30"
-              }`}
+              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "private"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
+                }`}
             >
               <Lock className="h-5 w-5 text-foreground" />
               <div className="flex-1 text-left">
@@ -293,9 +276,8 @@ const DemoScroll = () => {
                 <p className="text-xs text-muted-foreground">Only you can see this</p>
               </div>
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                  selectedVisibility === "private" ? "border-foreground bg-foreground" : "border-border"
-                }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedVisibility === "private" ? "border-foreground bg-foreground" : "border-border"
+                  }`}
               >
                 {selectedVisibility === "private" && (
                   <div className="w-2 h-2 bg-background rounded-full" />
@@ -305,11 +287,10 @@ const DemoScroll = () => {
 
             <button
               onClick={() => setSelectedVisibility("friends")}
-              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all duration-200 ${
-                selectedVisibility === "friends"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground hover:bg-accent/30"
-              }`}
+              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "friends"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
+                }`}
             >
               <Users className="h-5 w-5 text-foreground" />
               <div className="flex-1 text-left">
@@ -317,9 +298,8 @@ const DemoScroll = () => {
                 <p className="text-xs text-muted-foreground">Visible to your friends</p>
               </div>
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                  selectedVisibility === "friends" ? "border-foreground bg-foreground" : "border-border"
-                }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedVisibility === "friends" ? "border-foreground bg-foreground" : "border-border"
+                  }`}
               >
                 {selectedVisibility === "friends" && (
                   <div className="w-2 h-2 bg-background rounded-full" />
@@ -329,11 +309,10 @@ const DemoScroll = () => {
 
             <button
               onClick={() => setSelectedVisibility("public")}
-              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all duration-200 ${
-                selectedVisibility === "public"
-                  ? "border-foreground bg-accent"
-                  : "border-border hover:border-muted-foreground hover:bg-accent/30"
-              }`}
+              className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-colors ${selectedVisibility === "public"
+                ? "border-foreground bg-accent"
+                : "border-border hover:border-muted-foreground"
+                }`}
             >
               <Globe className="h-5 w-5 text-foreground" />
               <div className="flex-1 text-left">
@@ -341,9 +320,8 @@ const DemoScroll = () => {
                 <p className="text-xs text-muted-foreground">Anyone can see this</p>
               </div>
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                  selectedVisibility === "public" ? "border-foreground bg-foreground" : "border-border"
-                }`}
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedVisibility === "public" ? "border-foreground bg-foreground" : "border-border"
+                  }`}
               >
                 {selectedVisibility === "public" && (
                   <div className="w-2 h-2 bg-background rounded-full" />

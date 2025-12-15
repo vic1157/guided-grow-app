@@ -59,25 +59,25 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 234 20% 8%;
+    --background: 234 25% 12%;
     --foreground: 0 0% 98%;
 
-    --card: 234 18% 11%;
+    --card: 234 20% 16%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 234 18% 11%;
+    --popover: 234 20% 16%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 234 50% 60%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 45 70% 55%;
-    --secondary-foreground: 234 20% 8%;
+    --secondary-foreground: 234 25% 12%;
 
-    --muted: 234 15% 16%;
+    --muted: 234 15% 22%;
     --muted-foreground: 234 10% 65%;
 
-    --accent: 234 15% 20%;
+    --accent: 234 20% 25%;
     --accent-foreground: 0 0% 98%;
 
     --success: 142 70% 45%;
@@ -86,16 +86,16 @@ All colors MUST be HSL.
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 234 15% 22%;
-    --input: 234 15% 22%;
+    --border: 234 15% 25%;
+    --input: 234 15% 25%;
     --ring: 234 50% 60%;
-    --sidebar-background: 234 20% 8%;
+    --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 234 15% 16%;
+    --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 234 15% 20%;
+    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -105,28 +105,7 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  html, body {
+  body {
     @apply bg-background text-foreground;
-    -webkit-text-size-adjust: 100%;
-    overscroll-behavior: none;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  #root {
-    height: 100%;
-    overflow: auto;
-  }
-
-  /* Prevent iOS zoom on input focus */
-  input, textarea, select {
-    font-size: 16px;
-  }
-
-  /* Mobile keyboard handling */
-  @supports (height: 100dvh) {
-    html, body {
-      height: 100dvh;
-    }
   }
 }

@@ -1,4 +1,6 @@
 import { Card } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 interface QuizQuestionData {
@@ -23,14 +25,11 @@ const QuizQuestion = ({
   onAnswerSelect,
   showCorrect = false,
 }: QuizQuestionProps) => {
-  // Generate letter from index (A, B, C, D)
-  const getLetter = (index: number) => String.fromCharCode(65 + index);
-
   return (
-    <Card className="p-6 space-y-6 border-2 border-foreground/20">
+    <Card className="p-6 space-y-4 border-2 border-foreground/20">
       {/* Question */}
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold text-foreground leading-relaxed">
+        <h3 className="text-lg font-semibold text-foreground leading-relaxed">
           {question.question}
         </h3>
         {question.verseReference && (
@@ -39,67 +38,62 @@ const QuizQuestion = ({
       </div>
 
       {/* Options */}
-      <div className="space-y-3">
-        {question.options.map((option, index) => {
-          const isSelected = selectedAnswer === index;
-          const isCorrect = index === question.correctAnswer;
-          const showAsCorrect = showCorrect && isCorrect;
-          const showAsIncorrect = showCorrect && isSelected && !isCorrect;
+      <RadioGroup
+        value={selectedAnswer?.toString()}
+        onValueChange={(value) => onAnswerSelect(parseInt(value))}
+        disabled={showCorrect}
+      >
+        <div className="space-y-3">
+          {question.options.map((option, index) => {
+            const isSelected = selectedAnswer === index;
+            const isCorrect = index === question.correctAnswer;
+            const showStatus = showCorrect && isSelected;
 
-          return (
-            <button
-              key={index}
-              onClick={() => !showCorrect && onAnswerSelect(index)}
-              disabled={showCorrect}
-              className={`w-full flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all duration-200 ${
-                showAsCorrect
-                  ? 'border-green-500 bg-green-50 dark:bg-green-950'
-                  : showAsIncorrect
-                  ? 'border-red-500 bg-red-50 dark:bg-red-950'
-                  : isSelected
-                  ? 'border-foreground bg-accent'
-                  : 'border-border hover:border-muted-foreground hover:bg-accent/30'
-              } ${!showCorrect ? 'cursor-pointer hover:scale-[1.01]' : 'cursor-default'}`}
-            >
-              {/* Letter Badge */}
+            return (
               <div
-                className={`h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all duration-200 ${
-                  showAsCorrect
-                    ? 'bg-green-500 text-white'
-                    : showAsIncorrect
-                    ? 'bg-red-500 text-white'
+                key={index}
+                className={`flex items-start space-x-3 rounded-lg border-2 p-4 transition-colors ${
+                  showCorrect
+                    ? isCorrect
+                      ? 'border-green-500 bg-green-50 dark:bg-green-950'
+                      : isSelected
+                      ? 'border-red-500 bg-red-50 dark:bg-red-950'
+                      : 'border-border'
                     : isSelected
-                    ? 'bg-foreground text-background'
-                    : 'bg-muted text-muted-foreground'
+                    ? 'border-foreground bg-accent'
+                    : 'border-border hover:border-muted-foreground'
                 }`}
               >
-                {getLetter(index)}
+                <RadioGroupItem
+                  value={index.toString()}
+                  id={`option-${index}`}
+                  className="mt-0.5"
+                />
+                <Label
+                  htmlFor={`option-${index}`}
+                  className="flex-1 text-sm font-medium leading-relaxed cursor-pointer"
+                >
+                  {option}
+                </Label>
+                {showStatus && (
+                  <>
+                    {isCorrect ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                    ) : (
+                      <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    )}
+                  </>
+                )}
               </div>
-
-              {/* Option Text */}
-              <span className="flex-1 text-sm font-medium leading-relaxed text-foreground">
-                {option}
-              </span>
-
-              {/* Status Icon (in review mode) */}
-              {showCorrect && (isSelected || isCorrect) && (
-                <div className="flex-shrink-0">
-                  {isCorrect ? (
-                    <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  ) : isSelected ? (
-                    <XCircle className="h-6 w-6 text-red-600" />
-                  ) : null}
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </RadioGroup>
 
       {/* Explanation (shown in review mode) */}
       {showCorrect && question.explanation && (
         <div className="pt-4 border-t border-border">
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">Explanation: </span>
             {question.explanation}
           </p>

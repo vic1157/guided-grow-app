@@ -48,8 +48,12 @@ const ReadingGoals = () => {
   };
 
   const handleSkipStep = () => {
-    setShowOnboardingModal(false);
-    navigate("/home");
+    if (onboardingStep === 1) {
+      setOnboardingStep(2);
+    } else {
+      setShowOnboardingModal(false);
+      navigate("/home");
+    }
   };
 
   return (
