@@ -264,9 +264,143 @@ interface ChatMessage {
 }
 ```
 
-### 6. Home Page (`/home`)
+### 6. Our Daily Bread (`/home`)
 
-Features OnboardingProgress component that tracks:
+**Core Feature**: Daily spiritual journey with three sequential activities designed to guide users through structured Bible engagement.
+
+#### Overview
+Our Daily Bread is a daily routine feature on the home page that provides users with a clear path for daily spiritual growth. Users progress through three activities that unlock sequentially, creating a guided journey from reading Scripture to deeper engagement through scrolls and quizzes.
+
+#### Journey Design
+- **Visual**: Vertical timeline/path design with circular journey markers
+- **Sequential Flow**: Each activity unlocks after completing the previous one
+- **Journey Markers**:
+  - Unlocked: Filled circle with icon
+  - Completed: Filled circle with checkmark
+  - Locked: Hollow circle with lock icon (pulsing when newly unlocked)
+- **Journey Path**: Gradient vertical line connecting all activities
+- **Card Layout**: Each activity in its own rounded card containing title, content, and action button
+
+#### Activity Flow
+
+**1. Verse of the Day** (Always Unlocked)
+- **Content**: Static daily verse with left-border accent
+- **Current Verse**: Jeremiah 29:11
+  ```
+  "For I know the plans I have for you," declares the LORD,
+  "plans to prosper you and not to harm you, plans to give
+  you hope and a future."
+  ```
+- **Action**: "Mark as Read" button → unlocks Scroll of the Day
+- **State**: Shows checkmark when read
+
+**2. Scroll of the Day** (Unlocks after reading verse)
+- **Content**: Based on expanded context of daily verse
+- **Current Scroll**: Jeremiah 29:10-14 - "God's Plans for Your Future"
+- **Details**:
+  - Passage: Jeremiah 29:10-14
+  - Description: "Discover God's promises of hope and a future for His people"
+  - Estimated Time: 3-4 min
+  - Verse Count: 5 verses
+- **Action**: "Start Scroll →" button → navigates to `/daily-scroll`
+- **State**: Shows "Completed" with checkmark after finishing scroll
+
+**3. Quiz of the Day** (Unlocks after completing scroll)
+- **Content**: 5-question multiple choice quiz about the daily passage
+- **Current Quiz**: 5 questions on Jeremiah 29:10-14
+- **Topics Covered**:
+  - God's plans for prosperity and hope (v.11)
+  - Length of exile (70 years, v.10)
+  - Seeking God with all your heart (v.13)
+  - God listening to prayers (v.12)
+  - Restoration of fortunes (v.14)
+- **Details**: 5 questions • 2-3 min
+- **Action**: "Start Quiz →" button → navigates to `/daily-quiz`
+- **State**: Shows "Completed" with checkmark after finishing quiz
+
+#### Daily Scroll Page (`/daily-scroll`)
+Complete scroll interface for daily reading:
+- **Header**: Passage title, verse range, estimated time
+- **Expandable Summary**: AI-generated chapter summary with "Show More/Less"
+- **Questions Section**: Understanding and Discussion categories with HelpCircle popover
+- **Personal Reflection**: Textarea for user notes
+- **Visibility Settings**: Private, Friends Only, Public (radio buttons)
+- **Content**: Same structure as DemoScroll but for daily passage
+- **Current Content**: Jeremiah 29:10-14 with contextual summary
+- **Action**: "Start Scroll" button → navigates back to home with completion state
+
+#### Daily Quiz Page (`/daily-quiz`)
+Interactive quiz experience:
+- **Progress Tracking**: Question counter and progress bar
+- **Question Interface**:
+  - Multiple choice with A/B/C/D letter badges
+  - Circular letter indicators
+  - Selection states with visual feedback
+  - Previous/Next navigation
+  - Scripture references for each question
+- **Results View**:
+  - Large percentage score display
+  - "Review Your Answers" section
+  - Color-coded answer review:
+    - ✅ Correct answers: Green background, green border
+    - ❌ Incorrect answers: Red background, red border
+  - Explanation boxes with verse references
+  - No back button (must complete to proceed)
+- **Completion**: "Complete Quiz" button → returns to home with completion state
+
+#### Completion Celebration
+When all three activities are completed, a congratulatory message appears:
+- **Design**: Green gradient background with star watermark
+- **Content**:
+  - 🎉 Emoji
+  - "Daily Bread Complete!" headline
+  - "You've completed today's verse, scroll, and quiz. Well done!"
+  - "Come back tomorrow for new content"
+- **Placement**: Above Our Daily Bread component
+
+#### State Management
+- **localStorage Persistence**: Completion states saved with date-based keys
+- **Automatic Daily Reset**: Checks date on initialization and resets if new day
+- **State Keys**:
+  - `dailyBreadDate`: Current date for reset logic
+  - `dailyScrollCompleted`: Scroll completion state
+  - `dailyQuizCompleted`: Quiz completion state
+- **Navigation State**: Also uses React Router state for immediate updates
+
+#### Data Structures
+```typescript
+interface DailyVerse {
+  text: string;
+  reference: string;
+}
+
+interface DailyScrollData {
+  title: string;
+  passage: string;
+  description: string;
+  estimatedTime: string;
+  verseCount: number;
+}
+
+interface QuizQuestion {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+  verseReference: string;
+}
+```
+
+### 7. Home Page (`/home`)
+
+**Layout Order** (Top to Bottom):
+1. Header (Stats Section: Reading Streak, Weekly Activity)
+2. **Onboarding Progress** - Task tracker widget
+3. **Our Daily Bread** - Daily spiritual journey (with completion message if applicable)
+4. **Curated Bible Readings** - Personalized recommendations
+
+OnboardingProgress component tracks:
 1. Complete Your Profile ✓ (navigates to `/profile?onboarding=true`)
 2. Set Your Reading Goals ✓ (navigates to `/reading-goals?onboarding=true`)
 3. RYB Scroll Walkthrough ✓ (navigates to `/scroll-walkthrough`)
@@ -292,23 +426,26 @@ src/
 │   ├── ReadingGoals.tsx     # Reading goals + notifications
 │   ├── ScrollWalkthrough.tsx # Interactive scroll concept tour
 │   ├── DemoScroll.tsx       # Hands-on demo scroll experience
+│   ├── DailyScroll.tsx      # Daily Bread scroll page (NEW)
+│   ├── DailyQuiz.tsx        # Daily Bread quiz page (NEW)
 │   ├── Community.tsx        # Community preview (coming soon)
 │   ├── Read.tsx             # Bible reading engine + ActivityPanel
-│   ├── ScriptureExplorer.tsx # Scripture Explorer hub (NEW)
-│   ├── Chat.tsx             # AI chat interface with Leo (NEW)
-│   ├── NewQuiz.tsx          # Quiz selection page (NEW)
-│   ├── ScrollDetail.tsx     # Scroll detail + quiz taking (NEW)
+│   ├── ScriptureExplorer.tsx # Scripture Explorer hub
+│   ├── Chat.tsx             # AI chat interface with Leo
+│   ├── NewQuiz.tsx          # Quiz selection page
+│   ├── ScrollDetail.tsx     # Scroll detail + quiz taking
 │   ├── Index.tsx            # Home page
 │   ├── Profile.tsx          # User profile + onboarding
 │   └── NotFound.tsx         # 404 page
 ├── components/
 │   ├── Footer.tsx           # App footer (updated Create button path)
 │   ├── OnboardingProgress.tsx  # Task tracker widget
+│   ├── OurDailyBread.tsx    # Daily spiritual journey component (NEW)
 │   ├── ActivityPanel.tsx    # Draggable AI features panel (Read page)
-│   ├── ScrollListItem.tsx   # Scroll list card component (NEW)
-│   ├── ChatListItem.tsx     # Chat list card component (NEW)
-│   ├── ChatMessage.tsx      # Chat message bubble (NEW)
-│   ├── QuizQuestion.tsx     # Quiz question component (NEW)
+│   ├── ScrollListItem.tsx   # Scroll list card component
+│   ├── ChatListItem.tsx     # Chat list card component
+│   ├── ChatMessage.tsx      # Chat message bubble
+│   ├── QuizQuestion.tsx     # Quiz question component
 │   └── ui/                  # Shadcn UI components
 ├── hooks/
 │   ├── use-mobile.tsx       # Mobile detection hook
@@ -327,6 +464,11 @@ src/
   - `readingGoalsOnboardingComplete`: Reading goals setup completion
   - `scrollWalkthroughComplete`: Scroll walkthrough completion
   - User preferences (reading goals, notification settings)
+- Uses localStorage for Our Daily Bread:
+  - `dailyBreadDate`: Current date for daily reset logic
+  - `dailyScrollCompleted`: Daily scroll completion state
+  - `dailyQuizCompleted`: Daily quiz completion state
+  - Automatically resets when date changes
 
 ### Cross-Component Communication
 - Custom events for state synchronization:
@@ -384,6 +526,11 @@ interface Chapter {
 ✅ Scripture Explorer redesign with tabs and action cards
 ✅ Quiz interface redesign with custom scripture range selection
 ✅ Leo AI introduction in chat welcome message
+✅ Our Daily Bread feature with sequential journey design
+✅ Daily Scroll and Daily Quiz pages based on Jeremiah 29
+✅ Uniform quiz results style across application
+✅ Completion celebration message for Daily Bread
+✅ localStorage persistence with automatic daily reset
 
 ## Changes on `olu/ryb-52-implement-scripture-explorer-in-prototype` Branch
 
