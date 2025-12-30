@@ -20,14 +20,21 @@ const Index = () => {
   const [dailyScrollCompleted, setDailyScrollCompleted] = useState(() => {
     const storedDate = localStorage.getItem('dailyBreadDate');
     if (storedDate !== today) {
-      // New day, reset everything
-      localStorage.setItem('dailyBreadDate', today);
-      localStorage.removeItem('dailyScrollCompleted');
-      localStorage.removeItem('dailyQuizCompleted');
       return false;
     }
     return localStorage.getItem('dailyScrollCompleted') === 'true';
   });
+
+  // Reset logic moved outside state initializer
+  useEffect(() => {
+    const storedDate = localStorage.getItem('dailyBreadDate');
+    if (storedDate !== today) {
+      // New day, reset everything
+      localStorage.setItem('dailyBreadDate', today);
+      localStorage.removeItem('dailyScrollCompleted');
+      localStorage.removeItem('dailyQuizCompleted');
+    }
+  }, [today]);
 
   const [dailyQuizCompleted, setDailyQuizCompleted] = useState(() => {
     const storedDate = localStorage.getItem('dailyBreadDate');
@@ -50,13 +57,18 @@ const Index = () => {
 
   // Listen for navigation state updates
   useEffect(() => {
-    if (location.state?.dailyScrollCompleted) {
-      setDailyScrollCompleted(true);
+    const storedDate = localStorage.getItem('dailyBreadDate');
+
+    // Only apply location state if it's from today (prevents stale browser history from bypassing daily reset)
+    if (storedDate === today) {
+      if (location.state?.dailyScrollCompleted) {
+        setDailyScrollCompleted(true);
+      }
+      if (location.state?.dailyQuizCompleted) {
+        setDailyQuizCompleted(true);
+      }
     }
-    if (location.state?.dailyQuizCompleted) {
-      setDailyQuizCompleted(true);
-    }
-  }, [location]);
+  }, [location, today]);
 
   return (
     <div className="min-h-screen bg-muted pb-20">

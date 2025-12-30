@@ -207,12 +207,16 @@ const OurDailyBread = ({ scrollCompleted = false, quizCompleted = false }: OurDa
           <div
             className={cn(
               "absolute -left-14 top-6 w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all shadow-sm",
-              isQuizUnlocked
+              quizCompleted
+                ? "bg-foreground border-foreground"
+                : isQuizUnlocked
                 ? "bg-background border-foreground animate-pulse"
                 : "bg-background border-muted-foreground/30"
             )}
           >
-            {isQuizUnlocked ? (
+            {quizCompleted ? (
+              <Check className="h-5 w-5 text-background" />
+            ) : isQuizUnlocked ? (
               <HelpCircle className="h-5 w-5 text-foreground" />
             ) : (
               <Lock className="h-5 w-5 text-muted-foreground/50" />

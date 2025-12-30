@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import {
 
 const DailyScroll = () => {
   const navigate = useNavigate();
+  const navigationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [expandedSummary, setExpandedSummary] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<{
     understanding: boolean;
@@ -39,9 +40,18 @@ const DailyScroll = () => {
   );
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
+  // Cleanup timeout on unmount to prevent unexpected navigation
+  useEffect(() => {
+    return () => {
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleCompleteScroll = () => {
     setShowSuccessMessage(true);
-    setTimeout(() => {
+    navigationTimeoutRef.current = setTimeout(() => {
       navigate("/home", { state: { dailyScrollCompleted: true } });
     }, 2000);
   };
