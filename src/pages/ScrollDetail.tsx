@@ -25,6 +25,7 @@ import {
   Users,
   Globe,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Interfaces
 interface Question {
@@ -299,63 +300,98 @@ const ScrollDetail = () => {
     return (
       <div className="min-h-screen bg-background pb-20">
         <header className="sticky top-0 z-10 bg-card border-b-2 border-foreground/30">
-          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBackToScroll}
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="h-5 w-5" />
+              <span>Back</span>
+            </Button>
             <h1 className="text-lg font-semibold text-foreground">Quiz Results</h1>
+            <div className="w-16" />
           </div>
         </header>
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
           {/* Score Card */}
           <Card className="p-6 text-center space-y-4 border-2 border-foreground/20">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent">
-              <Award className="h-10 w-10 text-foreground" />
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold text-foreground">{percentage}%</h2>
+              <p className="text-muted-foreground">
+                You got {score.correct} out of {score.total} questions correct
+              </p>
             </div>
-            <div>
-              <h2 className="text-3xl font-bold text-foreground">
-                {score.correct}/{score.total}
-              </h2>
-              <p className="text-muted-foreground mt-1">{percentage}% Correct</p>
+            <div className="pt-4">
+              <Button
+                onClick={handleBackToScroll}
+                className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-full font-semibold"
+              >
+                Back to Scroll
+              </Button>
             </div>
           </Card>
 
           {/* Question Review */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">Review Your Answers</h3>
+            <h3 className="text-xl font-semibold text-foreground">Review Your Answers</h3>
             {quiz.questions.map((question, index) => {
               const userAnswer = userAnswers[index];
               const isCorrect = userAnswer === question.correctAnswer;
 
               return (
-                <Card key={question.id} className="p-4 space-y-3 border-2 border-foreground/10">
+                <Card key={question.id} className="p-5 space-y-4 border-2 border-foreground/20">
                   <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0">
-                      {isCorrect ? (
-                        <CheckCircle2 className="h-6 w-6 text-green-600" />
-                      ) : (
-                        <XCircle className="h-6 w-6 text-red-600" />
-                      )}
-                    </div>
-                    <div className="flex-1 space-y-2">
+                    {isCorrect ? (
+                      <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                    ) : (
+                      <XCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                    )}
+                    <div className="flex-1 space-y-3">
                       <p className="font-semibold text-foreground">{question.question}</p>
-                      {question.verseReference && (
-                        <p className="text-xs text-muted-foreground italic">{question.verseReference}</p>
-                      )}
-                      <div className="space-y-1 text-sm">
-                        <p className={isCorrect ? "text-green-600" : "text-red-600"}>
-                          Your answer: {userAnswer !== null ? question.options[userAnswer] : "Not answered"}
-                        </p>
-                        {!isCorrect && (
-                          <p className="text-green-600">
-                            Correct answer: {question.options[question.correctAnswer]}
-                          </p>
+
+                      <div className="space-y-2">
+                        {question.options.map((option, optionIndex) => {
+                          const isUserAnswer = userAnswer === optionIndex;
+                          const isCorrectAnswer = optionIndex === question.correctAnswer;
+
+                          return (
+                            <div
+                              key={optionIndex}
+                              className={cn(
+                                "p-3 rounded-lg border-2 text-sm",
+                                isCorrectAnswer && "bg-green-50 border-green-600 dark:bg-green-950/20",
+                                isUserAnswer && !isCorrectAnswer && "bg-red-50 border-red-600 dark:bg-red-950/20",
+                                !isUserAnswer && !isCorrectAnswer && "border-border"
+                              )}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className={cn(
+                                  isCorrectAnswer && "font-semibold text-green-700 dark:text-green-400",
+                                  isUserAnswer && !isCorrectAnswer && "font-semibold text-red-700 dark:text-red-400"
+                                )}>
+                                  {option}
+                                </span>
+                                {isCorrectAnswer && (
+                                  <span className="text-xs text-green-700 dark:text-green-400">Correct</span>
+                                )}
+                                {isUserAnswer && !isCorrectAnswer && (
+                                  <span className="text-xs text-red-700 dark:text-red-400">Your answer</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="bg-accent/50 p-3 rounded-lg space-y-1">
+                        <p className="text-sm text-foreground">{question.explanation}</p>
+                        {question.verseReference && (
+                          <p className="text-xs text-muted-foreground">{question.verseReference}</p>
                         )}
                       </div>
-                      {question.explanation && (
-                        <p className="text-sm text-muted-foreground pt-2 border-t border-border">
-                          <span className="font-semibold">Explanation: </span>
-                          {question.explanation}
-                        </p>
-                      )}
                     </div>
                   </div>
                 </Card>
@@ -363,18 +399,12 @@ const ScrollDetail = () => {
             })}
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={handleBackToScroll}
-              className="flex-1"
-            >
-              Back to Scroll
-            </Button>
+          {/* Retake Button */}
+          <div className="pt-2">
             <Button
               onClick={handleStartQuiz}
-              className="flex-1 bg-foreground text-background hover:bg-foreground/90"
+              variant="outline"
+              className="w-full h-12 rounded-full font-semibold"
             >
               Retake Quiz
             </Button>

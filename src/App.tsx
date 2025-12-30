@@ -23,6 +23,8 @@ import ScriptureExplorer from "./pages/ScriptureExplorer";
 import Chat from "./pages/Chat";
 import NewQuiz from "./pages/NewQuiz";
 import ScrollDetail from "./pages/ScrollDetail";
+import DailyScroll from "./pages/DailyScroll";
+import DailyQuiz from "./pages/DailyQuiz";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +56,8 @@ const App = () => (
           <Route path="/chat" element={<Chat />} />
           <Route path="/new-quiz" element={<NewQuiz />} />
           <Route path="/scroll/:id" element={<ScrollDetail />} />
+          <Route path="/daily-scroll" element={<DailyScroll />} />
+          <Route path="/daily-quiz" element={<DailyQuiz />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

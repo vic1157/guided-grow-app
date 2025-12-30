@@ -1,4 +1,7 @@
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import OnboardingProgress from "@/components/OnboardingProgress";
+import OurDailyBread from "@/components/OurDailyBread";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +11,64 @@ import { useTheme } from "@/hooks/use-theme";
 
 const Index = () => {
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
+
+  // Get today's date for daily reset
+  const today = new Date().toDateString();
+
+  // Initialize states from localStorage
+  const [dailyScrollCompleted, setDailyScrollCompleted] = useState(() => {
+    const storedDate = localStorage.getItem('dailyBreadDate');
+    if (storedDate !== today) {
+      return false;
+    }
+    return localStorage.getItem('dailyScrollCompleted') === 'true';
+  });
+
+  // Reset logic moved outside state initializer
+  useEffect(() => {
+    const storedDate = localStorage.getItem('dailyBreadDate');
+    if (storedDate !== today) {
+      // New day, reset everything
+      localStorage.setItem('dailyBreadDate', today);
+      localStorage.removeItem('dailyScrollCompleted');
+      localStorage.removeItem('dailyQuizCompleted');
+    }
+  }, [today]);
+
+  const [dailyQuizCompleted, setDailyQuizCompleted] = useState(() => {
+    const storedDate = localStorage.getItem('dailyBreadDate');
+    if (storedDate !== today) return false;
+    return localStorage.getItem('dailyQuizCompleted') === 'true';
+  });
+
+  // Update localStorage when states change
+  useEffect(() => {
+    if (dailyScrollCompleted) {
+      localStorage.setItem('dailyScrollCompleted', 'true');
+    }
+  }, [dailyScrollCompleted]);
+
+  useEffect(() => {
+    if (dailyQuizCompleted) {
+      localStorage.setItem('dailyQuizCompleted', 'true');
+    }
+  }, [dailyQuizCompleted]);
+
+  // Listen for navigation state updates
+  useEffect(() => {
+    const storedDate = localStorage.getItem('dailyBreadDate');
+
+    // Only apply location state if it's from today (prevents stale browser history from bypassing daily reset)
+    if (storedDate === today) {
+      if (location.state?.dailyScrollCompleted) {
+        setDailyScrollCompleted(true);
+      }
+      if (location.state?.dailyQuizCompleted) {
+        setDailyQuizCompleted(true);
+      }
+    }
+  }, [location, today]);
 
   return (
     <div className="min-h-screen bg-muted pb-20">
@@ -99,19 +160,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Verse of the Day */}
-            <div>
-              <h2 className="font-semibold text-lg mb-3 text-card-foreground">Verse of the Day</h2>
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="border-l-4 border-foreground pl-4 py-2">
-                  <p className="text-sm text-foreground leading-relaxed mb-2">
-                    "For I know the plans I have for you," declares the LORD, "plans to prosper you and
-                    not to harm you, plans to give you hope and a future."
-                  </p>
-                  <p className="text-sm text-muted-foreground">Jeremiah 29:11</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -121,6 +169,32 @@ const Index = () => {
         <div className="bg-background px-4 py-6">
           {/* Onboarding Progress */}
           <OnboardingProgress />
+        </div>
+
+        <div className="bg-background px-4 py-6 space-y-4">
+          {/* Completion Message */}
+          {dailyScrollCompleted && dailyQuizCompleted && (
+            <div className="relative bg-gradient-to-r from-green-50 via-green-100 to-green-50 dark:from-green-950/30 dark:via-green-900/30 dark:to-green-950/30 border-2 border-green-600/30 rounded-2xl p-6 text-center overflow-hidden">
+              <div className="absolute top-0 right-0 opacity-10">
+                <svg className="h-32 w-32 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                </svg>
+              </div>
+              <div className="relative space-y-2">
+                <div className="text-4xl mb-2">🎉</div>
+                <h3 className="text-2xl font-bold text-green-700 dark:text-green-400">Daily Bread Complete!</h3>
+                <p className="text-sm text-green-600 dark:text-green-500">
+                  You've completed today's verse, scroll, and quiz. Well done!
+                </p>
+                <p className="text-xs text-green-600/80 dark:text-green-500/80 pt-2">
+                  Come back tomorrow for new content
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Our Daily Bread */}
+          <OurDailyBread scrollCompleted={dailyScrollCompleted} quizCompleted={dailyQuizCompleted} />
         </div>
 
         {/* Curated Bible Readings */}
