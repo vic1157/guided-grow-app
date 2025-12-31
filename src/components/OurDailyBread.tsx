@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { BookOpen, Scroll, HelpCircle, Lock, Clock, Check, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +46,7 @@ interface OurDailyBreadProps {
 const OurDailyBread = ({ scrollCompleted = false, quizCompleted = false }: OurDailyBreadProps) => {
   const navigate = useNavigate();
   const [verseRead, setVerseRead] = useState(false);
+  const [showWalkthroughDialog, setShowWalkthroughDialog] = useState(false);
 
   // Update internal state when scroll is completed
   useEffect(() => {
@@ -52,7 +61,21 @@ const OurDailyBread = ({ scrollCompleted = false, quizCompleted = false }: OurDa
   };
 
   const handleStartScroll = () => {
-    navigate("/daily-scroll");
+    // Check if user has completed the scroll walkthrough
+    const walkthroughComplete = localStorage.getItem("scrollWalkthroughComplete") === "true";
+
+    if (!walkthroughComplete) {
+      // Show dialog prompting user to complete walkthrough
+      setShowWalkthroughDialog(true);
+    } else {
+      // Proceed to daily scroll
+      navigate("/daily-scroll");
+    }
+  };
+
+  const handleGoToWalkthrough = () => {
+    setShowWalkthroughDialog(false);
+    navigate("/scroll-walkthrough");
   };
 
   const handleStartQuiz = () => {
@@ -259,6 +282,52 @@ const OurDailyBread = ({ scrollCompleted = false, quizCompleted = false }: OurDa
           </div>
         </div>
       </div>
+
+      {/* Walkthrough Prompt Dialog */}
+      <Dialog open={showWalkthroughDialog} onOpenChange={setShowWalkthroughDialog}>
+        <DialogContent className="rounded-3xl w-[calc(100%-2rem)] max-w-md p-8 gap-6">
+          <DialogHeader className="space-y-6">
+            <DialogTitle className="flex items-center gap-3 text-xl">
+              <Scroll className="h-6 w-6" />
+              Learn About Scrolls First
+            </DialogTitle>
+            <DialogDescription className="space-y-8 pt-4 text-base leading-relaxed">
+              <p>
+                Before starting your first Scroll, we recommend taking a quick walkthrough to understand how Scrolls work.
+              </p>
+              <div className="space-y-4 text-left">
+                <p className="text-sm font-medium">
+                  The RYB Scroll Walkthrough will show you how to:
+                </p>
+                <ul className="text-sm list-disc list-outside space-y-2 pl-5 ml-1">
+                  <li>Track your Bible reading sessions</li>
+                  <li>Use AI-generated summaries</li>
+                  <li>Capture questions while reading</li>
+                  <li>Write personal reflections</li>
+                </ul>
+              </div>
+              <p className="text-sm font-medium text-foreground">
+                It only takes 2-3 minutes and will help you get the most out of your Scrolls!
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-3 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowWalkthroughDialog(false)}
+              className="w-full sm:w-auto rounded-full h-11"
+            >
+              Maybe Later
+            </Button>
+            <Button
+              onClick={handleGoToWalkthrough}
+              className="w-full sm:w-auto rounded-full h-11 bg-foreground text-background hover:bg-foreground/90"
+            >
+              Start Walkthrough
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
