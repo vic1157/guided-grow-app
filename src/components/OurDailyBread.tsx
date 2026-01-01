@@ -320,7 +320,7 @@ const OurDailyBread = ({ scrollCompleted = false, quizCompleted = false }: OurDa
               }}
               className="w-full sm:w-auto rounded-full h-11"
             >
-              Maybe Later
+              Skip for Now
             </Button>
             <Button
               onClick={handleGoToWalkthrough}
