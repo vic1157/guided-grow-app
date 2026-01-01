@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, CheckCircle, XCircle } from "lucide-react";
+import { ChevronLeft, CheckCircle, XCircle, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface QuizQuestion {
@@ -87,6 +87,37 @@ const DailyQuiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Scroll to top button visibility
+  useEffect(() => {
+    if (!showResults) {
+      setShowScrollTop(false);
+      return;
+    }
+
+    const scrollContainer = document.getElementById("root");
+    const handleScroll = () => {
+      const scrollTop = scrollContainer ? scrollContainer.scrollTop : window.scrollY;
+      setShowScrollTop(scrollTop > 200);
+    };
+
+    // Check initial scroll position
+    handleScroll();
+
+    const target = scrollContainer ?? window;
+    target.addEventListener("scroll", handleScroll);
+    return () => target.removeEventListener("scroll", handleScroll);
+  }, [showResults]);
+
+  const scrollToTop = () => {
+    const scrollContainer = document.getElementById("root");
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === QUIZ_QUESTIONS.length - 1;
@@ -219,6 +250,17 @@ const DailyQuiz = () => {
             })}
           </div>
         </main>
+
+        {/* Jump to Top Button */}
+        {showScrollTop && (
+          <Button
+            onClick={scrollToTop}
+            className="fixed bottom-24 right-4 h-12 w-12 rounded-full bg-foreground text-background shadow-lg hover:bg-foreground/90 z-20 transition-opacity"
+            size="icon"
+          >
+            <ArrowUp className="h-5 w-5" />
+          </Button>
+        )}
       </div>
     );
   }
