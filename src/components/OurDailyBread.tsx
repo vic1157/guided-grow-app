@@ -314,7 +314,10 @@ const OurDailyBread = ({ scrollCompleted = false, quizCompleted = false }: OurDa
           <DialogFooter className="flex-col sm:flex-row gap-3 pt-2">
             <Button
               variant="outline"
-              onClick={() => setShowWalkthroughDialog(false)}
+              onClick={() => {
+                setShowWalkthroughDialog(false);
+                navigate("/daily-scroll");
+              }}
               className="w-full sm:w-auto rounded-full h-11"
             >
               Maybe Later
