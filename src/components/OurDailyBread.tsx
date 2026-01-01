@@ -39,25 +39,23 @@ const DAILY_SCROLL: DailyScrollData = {
 };
 
 interface OurDailyBreadProps {
+  verseRead?: boolean;
   scrollCompleted?: boolean;
   quizCompleted?: boolean;
+  onVerseRead?: () => void;
 }
 
-const OurDailyBread = ({ scrollCompleted = false, quizCompleted = false }: OurDailyBreadProps) => {
+const OurDailyBread = ({
+  verseRead = false,
+  scrollCompleted = false,
+  quizCompleted = false,
+  onVerseRead
+}: OurDailyBreadProps) => {
   const navigate = useNavigate();
-  const [verseRead, setVerseRead] = useState(false);
   const [showWalkthroughDialog, setShowWalkthroughDialog] = useState(false);
 
-  // Update internal state when scroll is completed
-  useEffect(() => {
-    if (scrollCompleted) {
-      // If scroll is completed, verse must have been read too
-      setVerseRead(true);
-    }
-  }, [scrollCompleted]);
-
   const handleMarkAsRead = () => {
-    setVerseRead(true);
+    onVerseRead?.();
   };
 
   const handleStartScroll = () => {

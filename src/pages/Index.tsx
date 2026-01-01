@@ -33,6 +33,7 @@ const Index = () => {
       localStorage.setItem('dailyBreadDate', today);
       localStorage.removeItem('dailyScrollCompleted');
       localStorage.removeItem('dailyQuizCompleted');
+      localStorage.removeItem('dailyVerseRead');
     }
   }, [today]);
 
@@ -40,6 +41,14 @@ const Index = () => {
     const storedDate = localStorage.getItem('dailyBreadDate');
     if (storedDate !== today) return false;
     return localStorage.getItem('dailyQuizCompleted') === 'true';
+  });
+
+  const [dailyVerseRead, setDailyVerseRead] = useState(() => {
+    const storedDate = localStorage.getItem('dailyBreadDate');
+    if (storedDate !== today) {
+      return false;
+    }
+    return localStorage.getItem('dailyVerseRead') === 'true';
   });
 
   // Update localStorage when states change
@@ -55,6 +64,12 @@ const Index = () => {
     }
   }, [dailyQuizCompleted]);
 
+  useEffect(() => {
+    if (dailyVerseRead) {
+      localStorage.setItem('dailyVerseRead', 'true');
+    }
+  }, [dailyVerseRead]);
+
   // Listen for navigation state updates
   useEffect(() => {
     const storedDate = localStorage.getItem('dailyBreadDate');
@@ -66,6 +81,9 @@ const Index = () => {
       }
       if (location.state?.dailyQuizCompleted) {
         setDailyQuizCompleted(true);
+      }
+      if (location.state?.dailyVerseRead) {
+        setDailyVerseRead(true);
       }
     }
   }, [location, today]);
@@ -194,7 +212,12 @@ const Index = () => {
           )}
 
           {/* Our Daily Bread */}
-          <OurDailyBread scrollCompleted={dailyScrollCompleted} quizCompleted={dailyQuizCompleted} />
+          <OurDailyBread
+            verseRead={dailyVerseRead}
+            scrollCompleted={dailyScrollCompleted}
+            quizCompleted={dailyQuizCompleted}
+            onVerseRead={() => setDailyVerseRead(true)}
+          />
         </div>
 
         {/* Curated Bible Readings */}
