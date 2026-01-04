@@ -7,7 +7,7 @@ const EmailConfirmed = () => {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-    navigate("/survey");
+    navigate("/interactive-survey");
   };
 
   const features = [
