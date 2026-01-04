@@ -64,3 +64,17 @@ Authenticated + onboarding complete:
 - Email confirmation settings: should confirmation be required for email/password?
 - Billing source of truth: where does plan status live (Stripe/subscriptions table vs profiles field)?
 - Survey data persistence: where should retake history be stored (new table vs profile fields)?
+
+## Account Management - Open Questions
+
+- For email changes, is link-based confirmation acceptable, or should it also be OTP?
+- Should account deletion be hard delete only, or include a soft-delete option?
+- Should Google account linking ship in the first auth pass, or after onboarding is stable?
+
+## Supabase email setup checklist
+- Update Auth email templates (Confirm signup, Magic Link, Recovery, Change Email) with Guided Grow branding
+- Ensure OTP templates clearly show the 6-digit code and fallback instructions
+- Configure custom SMTP for branded sender and better deliverability (optional)
+- Set SITE_URL to the primary production domain
+- Add all expected redirect URLs to the allowlist (local + prod)
+- Verify reset and auth callbacks land in the correct routes
