@@ -37,7 +37,10 @@ const Survey = () => {
     } else {
       // Last question - submit and navigate
       console.log("Survey answers:", answers);
-      navigate("/survey-results");
+      // Save to localStorage as backup
+      localStorage.setItem("surveyAnswers", JSON.stringify(answers));
+      // Navigate to persona wheel with state
+      navigate("/persona-wheel", { state: { answers } });
     }
   };
 
