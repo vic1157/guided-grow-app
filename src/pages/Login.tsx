@@ -5,16 +5,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/lib/supabaseClient";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication
+    setSubmitting(true);
+    setErrorMessage("");
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      setSubmitting(false);
+      return;
+    }
+
+    setSubmitting(false);
     navigate("/home");
   };
 
@@ -32,6 +50,12 @@ const Login = () => {
         
         <h1 className="text-2xl font-bold text-foreground mb-1">RYB</h1>
         <p className="text-sm text-muted-foreground mb-8">Read Your Bible</p>
+
+        {errorMessage && (
+          <Alert className="mb-6 border-border bg-accent">
+            <AlertDescription className="text-sm">{errorMessage}</AlertDescription>
+          </Alert>
+        )}
 
         <form onSubmit={handleSignIn} className="w-full space-y-4">
           <Input
@@ -68,9 +92,10 @@ const Login = () => {
 
           <Button
             type="submit"
+            disabled={submitting}
             className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium"
           >
-            Sign In
+            {submitting ? "Signing In..." : "Sign In"}
           </Button>
         </form>
 
@@ -117,7 +142,7 @@ const Login = () => {
             </button>
           </p>
           <button
-            onClick={() => navigate("/forgot-password")}
+            onClick={() => navigate("/reset-password")}
             className="text-sm text-foreground"
           >
             Forgot password?

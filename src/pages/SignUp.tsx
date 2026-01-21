@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/lib/supabaseClient";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -11,9 +13,9 @@ const SignUp = () => {
     lastName: "",
     email: "",
     username: "",
-    password: "",
-    confirmPassword: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -22,9 +24,45 @@ const SignUp = () => {
     });
   };
 
-  const handleCreateAccount = (e: React.FormEvent) => {
+  const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement sign-up logic
+    setErrorMessage("");
+
+    if (!formData.email || !formData.firstName || !formData.lastName || !formData.username) {
+      setErrorMessage("Please complete all fields to continue.");
+      return;
+    }
+
+    setSubmitting(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email: formData.email,
+      options: {
+        shouldCreateUser: true,
+        data: {
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          username: formData.username,
+        },
+      },
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      setSubmitting(false);
+      return;
+    }
+
+    localStorage.setItem(
+      "pendingSignup",
+      JSON.stringify({
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        username: formData.username,
+      }),
+    );
+
+    setSubmitting(false);
     navigate("/verify-email", { state: { email: formData.email } });
   };
 
@@ -42,6 +80,12 @@ const SignUp = () => {
         
         <h1 className="text-2xl font-bold text-foreground mb-1">RYB</h1>
         <p className="text-sm text-muted-foreground mb-8">Read Your Bible</p>
+
+        {errorMessage && (
+          <Alert className="mb-6 border-border bg-accent">
+            <AlertDescription className="text-sm">{errorMessage}</AlertDescription>
+          </Alert>
+        )}
 
         <form onSubmit={handleCreateAccount} className="w-full space-y-4">
           <Input
@@ -83,32 +127,13 @@ const SignUp = () => {
             className="h-12 bg-accent border-0 rounded-xl"
             required
           />
-          
-          <Input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            className="h-12 bg-accent border-0 rounded-xl"
-            required
-          />
-          
-          <Input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="h-12 bg-accent border-0 rounded-xl"
-            required
-          />
 
           <Button
             type="submit"
+            disabled={submitting}
             className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium"
           >
-            Create Account
+            {submitting ? "Sending Code..." : "Create Account"}
           </Button>
         </form>
 
