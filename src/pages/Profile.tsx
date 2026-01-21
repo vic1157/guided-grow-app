@@ -4,10 +4,30 @@ import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Settings, Eye, ArrowRight, Upload, Camera, Check } from "lucide-react";
+import {
+  Bell,
+  Settings,
+  Eye,
+  ArrowRight,
+  Camera,
+  Check,
+  ArrowLeft,
+  ChevronRight,
+  Coins,
+  User,
+  Mail,
+  Lock,
+  BookOpen,
+  Type,
+  Moon,
+  HelpCircle,
+  Shield,
+  LogOut,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -18,6 +38,11 @@ const Profile = () => {
   const [profilePhoto, setProfilePhoto] = useState<string>("");
   const [testimony, setTestimony] = useState("");
   const [showOnboardingModal, setShowOnboardingModal] = useState(isOnboarding);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [dailyReminderEnabled, setDailyReminderEnabled] = useState(true);
+  const [streakReminderEnabled, setStreakReminderEnabled] = useState(true);
+  const [achievementEnabled, setAchievementEnabled] = useState(false);
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
   useEffect(() => {
     if (isOnboarding) {
@@ -183,9 +208,214 @@ const Profile = () => {
             <span className="font-semibold text-foreground">John D.</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <Settings className="h-5 w-5" />
-            </Button>
+            <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-md p-0">
+                <div className="flex h-full flex-col bg-background">
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9"
+                      onClick={() => setSettingsOpen(false)}
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <SheetHeader className="p-0">
+                      <SheetTitle className="text-lg">Settings</SheetTitle>
+                    </SheetHeader>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+                    <Card className="p-4 flex items-center justify-between bg-card">
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-xl bg-accent flex items-center justify-center">
+                          <Coins className="h-5 w-5 text-foreground" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Denarii Balance</p>
+                          <p className="text-2xl font-bold text-foreground">150</p>
+                        </div>
+                      </div>
+                      <Button variant="outline" className="rounded-full px-4">
+                        Get More
+                      </Button>
+                    </Card>
+
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Account
+                      </p>
+                      <Card className="divide-y divide-border">
+                        <button
+                          className="w-full flex items-center gap-3 p-4 text-left hover:bg-accent/40 transition-colors"
+                          onClick={() => navigate("/change-password")}
+                        >
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <User className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Edit Profile</p>
+                            <p className="text-xs text-muted-foreground">Name, photo, bio</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                        <button className="w-full flex items-center gap-3 p-4 text-left hover:bg-accent/40 transition-colors">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Mail className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Email</p>
+                            <p className="text-xs text-muted-foreground">john.doe@email.com</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                        <button className="w-full flex items-center gap-3 p-4 text-left hover:bg-accent/40 transition-colors">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Lock className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Change Password</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </Card>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Reading Preferences
+                      </p>
+                      <Card className="divide-y divide-border">
+                        <button className="w-full flex items-center gap-3 p-4 text-left hover:bg-accent/40 transition-colors">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <BookOpen className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Default Translation</p>
+                            <p className="text-xs text-muted-foreground">NIV</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                        <button className="w-full flex items-center gap-3 p-4 text-left hover:bg-accent/40 transition-colors">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Type className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Font Size</p>
+                            <p className="text-xs text-muted-foreground">Medium</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </Card>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Notifications
+                      </p>
+                      <Card className="divide-y divide-border">
+                        <div className="flex items-center gap-3 p-4">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Bell className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">
+                              Daily Reading Reminder
+                            </p>
+                            <p className="text-xs text-muted-foreground">9:00 AM</p>
+                          </div>
+                          <Switch
+                            checked={dailyReminderEnabled}
+                            onCheckedChange={setDailyReminderEnabled}
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 p-4">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Bell className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Streak Reminders</p>
+                            <p className="text-xs text-muted-foreground">Keep your streak alive</p>
+                          </div>
+                          <Switch
+                            checked={streakReminderEnabled}
+                            onCheckedChange={setStreakReminderEnabled}
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 p-4">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Bell className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">
+                              Achievement Notifications
+                            </p>
+                          </div>
+                          <Switch
+                            checked={achievementEnabled}
+                            onCheckedChange={setAchievementEnabled}
+                          />
+                        </div>
+                      </Card>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        App
+                      </p>
+                      <Card className="divide-y divide-border">
+                        <div className="flex items-center gap-3 p-4">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Moon className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Dark Mode</p>
+                          </div>
+                          <Switch
+                            checked={darkModeEnabled}
+                            onCheckedChange={setDarkModeEnabled}
+                          />
+                        </div>
+                        <button className="w-full flex items-center gap-3 p-4 text-left hover:bg-accent/40 transition-colors">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <HelpCircle className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Help & Support</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                        <button className="w-full flex items-center gap-3 p-4 text-left hover:bg-accent/40 transition-colors">
+                          <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center">
+                            <Shield className="h-5 w-5 text-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">Privacy Policy</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </Card>
+                    </div>
+
+                    <Card className="p-4 bg-destructive/10 border-destructive/30">
+                      <button className="w-full flex items-center gap-3 text-left">
+                        <div className="h-10 w-10 rounded-xl bg-destructive/15 flex items-center justify-center">
+                          <LogOut className="h-5 w-5 text-destructive" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-destructive">Sign Out</p>
+                        </div>
+                      </button>
+                    </Card>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
             <Button variant="ghost" size="icon" className="h-9 w-9">
               <Bell className="h-5 w-5" />
             </Button>

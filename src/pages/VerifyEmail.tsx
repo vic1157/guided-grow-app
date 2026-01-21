@@ -4,15 +4,35 @@ import { BookOpen, Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/lib/supabaseClient";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email || "user@example.com";
+  const storedSignup = localStorage.getItem("pendingSignup");
+  let parsedSignup: {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+  } | null = null;
+  if (storedSignup) {
+    try {
+      parsedSignup = JSON.parse(storedSignup);
+    } catch {
+      parsedSignup = null;
+    }
+  }
+  const email = location.state?.email || parsedSignup?.email || "user@example.com";
   
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [timeLeft, setTimeLeft] = useState(900); // 15 minutes in seconds
   const [showResendAlert, setShowResendAlert] = useState(false);
+  const [step, setStep] = useState<"otp" | "password">("otp");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -67,16 +87,99 @@ const VerifyEmail = () => {
     }
   };
 
-  const handleVerifyEmail = () => {
+  const handleVerifyEmail = async () => {
     const verificationCode = code.join("");
-    if (verificationCode.length === 6) {
-      // TODO: Implement verification logic
-      navigate("/email-confirmed");
+    if (verificationCode.length !== 6) {
+      return;
     }
+    setSubmitting(true);
+    setErrorMessage("");
+
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: verificationCode,
+      type: "email",
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      setSubmitting(false);
+      return;
+    }
+
+    setSubmitting(false);
+    setStep("password");
   };
 
-  const handleResendCode = () => {
-    // TODO: Implement resend logic
+  const handleSetPassword = async () => {
+    if (!password || password !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
+    setSubmitting(true);
+    setErrorMessage("");
+
+    const metadata = parsedSignup
+      ? {
+          first_name: parsedSignup.firstName,
+          last_name: parsedSignup.lastName,
+          username: parsedSignup.username,
+        }
+      : undefined;
+
+    const { error } = await supabase.auth.updateUser({
+      password,
+      data: metadata,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      setSubmitting(false);
+      return;
+    }
+
+    if (metadata) {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user) {
+        await supabase
+          .from("profiles")
+          .update({
+            first_name: metadata.first_name,
+            last_name: metadata.last_name,
+            username: metadata.username,
+          })
+          .eq("id", userData.user.id);
+      }
+    }
+
+    localStorage.removeItem("pendingSignup");
+    setSubmitting(false);
+    navigate("/email-confirmed");
+  };
+
+  const handleResendCode = async () => {
+    setShowResendAlert(false);
+    setErrorMessage("");
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+        data: parsedSignup
+          ? {
+              first_name: parsedSignup.firstName,
+              last_name: parsedSignup.lastName,
+              username: parsedSignup.username,
+            }
+          : undefined,
+      },
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
     setShowResendAlert(true);
     setTimeLeft(900);
     setCode(["", "", "", "", "", ""]);
@@ -98,12 +201,20 @@ const VerifyEmail = () => {
         <p className="text-sm text-muted-foreground mb-8">Read Your Bible</p>
 
         <h2 className="text-2xl font-bold text-foreground mb-3">
-          Verify Your Email
+          {step === "otp" ? "Verify Your Email" : "Set Your Password"}
         </h2>
-        <p className="text-sm text-muted-foreground text-center mb-2">
-          We've sent a 6-digit verification code to:
-        </p>
-        <p className="text-sm font-semibold text-foreground mb-6">{email}</p>
+        {step === "otp" ? (
+          <>
+            <p className="text-sm text-muted-foreground text-center mb-2">
+              We've sent a 6-digit verification code to:
+            </p>
+            <p className="text-sm font-semibold text-foreground mb-6">{email}</p>
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground text-center mb-6">
+            Create a password to finish setting up your account.
+          </p>
+        )}
 
         {showResendAlert && (
           <Alert className="mb-6 border-border bg-accent">
@@ -114,55 +225,91 @@ const VerifyEmail = () => {
           </Alert>
         )}
 
-        <div className="w-full mb-4">
-          <div className="flex gap-2 justify-center mb-4" onPaste={handlePaste}>
-            {code.map((digit, index) => (
-              <Input
-                key={index}
-                ref={(el) => (inputRefs.current[index] = el)}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleCodeChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-12 h-14 text-center text-lg font-semibold bg-accent border-border rounded-xl"
-              />
-            ))}
+        {errorMessage && (
+          <Alert className="mb-6 border-border bg-accent">
+            <AlertDescription className="text-sm">{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+
+        {step === "otp" ? (
+          <>
+            <div className="w-full mb-4">
+              <div className="flex gap-2 justify-center mb-4" onPaste={handlePaste}>
+                {code.map((digit, index) => (
+                  <Input
+                    key={index}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleCodeChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-12 h-14 text-center text-lg font-semibold bg-accent border-border rounded-xl"
+                  />
+                ))}
+              </div>
+
+              <p className="text-sm text-center text-muted-foreground mb-6">
+                Code expires in {formatTime(timeLeft)}
+              </p>
+
+              <Button
+                onClick={handleVerifyEmail}
+                disabled={code.some((digit) => !digit) || submitting}
+                className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium disabled:opacity-50"
+              >
+                {submitting ? "Verifying..." : "Verify Email"}
+              </Button>
+            </div>
+
+            <div className="text-center space-y-3 mt-6">
+              <p className="text-sm text-muted-foreground">
+                Didn't receive the code?
+              </p>
+              <button
+                onClick={handleResendCode}
+                className="text-sm font-semibold text-foreground"
+              >
+                Resend Code
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="w-full space-y-4">
+            <Input
+              type="password"
+              placeholder="Create password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="h-12 bg-accent border-0 rounded-xl"
+            />
+            <Input
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="h-12 bg-accent border-0 rounded-xl"
+            />
+            <Button
+              onClick={handleSetPassword}
+              disabled={!password || !confirmPassword || submitting}
+              className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium disabled:opacity-50"
+            >
+              {submitting ? "Saving..." : "Set Password"}
+            </Button>
           </div>
+        )}
 
-          <p className="text-sm text-center text-muted-foreground mb-6">
-            Code expires in {formatTime(timeLeft)}
-          </p>
-
-          <Button
-            onClick={handleVerifyEmail}
-            disabled={code.some((digit) => !digit)}
-            className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-medium disabled:opacity-50"
-          >
-            Verify Email
-          </Button>
-        </div>
-
-        <div className="text-center space-y-3 mt-6">
-          <p className="text-sm text-muted-foreground">
-            Didn't receive the code?
-          </p>
+        {step === "otp" && (
           <button
-            onClick={handleResendCode}
-            className="text-sm font-semibold text-foreground"
+            onClick={handleChangeEmail}
+            className="flex items-center gap-2 text-sm text-muted-foreground mt-6"
           >
-            Resend Code
+            <ArrowLeft className="h-4 w-4" />
+            Change email address
           </button>
-        </div>
-
-        <button
-          onClick={handleChangeEmail}
-          className="flex items-center gap-2 text-sm text-muted-foreground mt-6"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Change email address
-        </button>
+        )}
       </div>
 
       <div className="h-1 w-32 bg-foreground rounded-full" />
