@@ -27,6 +27,7 @@ import DailyScroll from "./pages/DailyScroll";
 import DailyQuiz from "./pages/DailyQuiz";
 import InteractiveSurvey from "./pages/InteractiveSurvey";
 import PersonaWheel from "./pages/PersonaWheel";
+import ChurchPitch from "./pages/ChurchPitch";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/daily-quiz" element={<DailyQuiz />} />
           <Route path="/interactive-survey" element={<InteractiveSurvey />} />
           <Route path="/persona-wheel" element={<PersonaWheel />} />
+          <Route path="/church-pitch" element={<ChurchPitch />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
